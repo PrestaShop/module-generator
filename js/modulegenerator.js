@@ -87,7 +87,7 @@ var Main = function () {
 		};
 		numberOfSteps = j('.swMain > ul > li').length;
 		var valueNow = Math.floor(100 / numberOfSteps * val);
-		// j('.step-bar').css('width', valueNow + '%');
+		j('.step-bar').css('width', valueNow + '%');
 	};
 
 	var leaveStep = function (obj, context) {
@@ -115,6 +115,7 @@ var Main = function () {
 		}
 		else
 		{
+			animateBar(nextStep);
 			j("#back-step").removeClass('hide');
 			j("#next-step").fadeIn("fast").addClass('hide');
 			return true;
@@ -131,7 +132,6 @@ var Main = function () {
 
 		j("#back-step").unbind("click").one("click", function(e) {
 			e.preventDefault();
-			 e.preventDefault();
 			$wizardContent.smartWizard("goBackward");
 		});
 

@@ -331,6 +331,10 @@ body {
 	color: inherit;
 }
 
+.nav-tabs>li>a {
+	background: #eeeeee;
+}
+
 /* FONT AWESOME EXTRAS -------------------------- */
 .icon-power-off:before, .icon-off:before, .bootstrap .process-icon-off:before { content: "\f011"; }
 .icon-trash:before, .bootstrap .process-icon-delete:before, .bootstrap .process-icon-uninstall:before { content: "\f014"; }
