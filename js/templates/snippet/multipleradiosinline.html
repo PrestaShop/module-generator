@@ -1,0 +1,13 @@
+<!-- Multiple Radios (inline) -->
+<div class="form-group">
+	<label for="<%= name %>" class="col-sm-2 control-label">
+		<%= label %>
+	</label>
+	<div class="col-sm-9">
+		<div class="btn-group" data-toggle-name="<%= name %>" data-toggle="buttons-radio" >
+			 <button type="button" value="1" class="btn" data-toggle="button">Yes</button>
+			 <button type="button" value="0" class="btn active" data-toggle="button">No</button>
+		</div>
+		<input type="hidden" name="<%= name %>" value="0" />
+	</div>
+</div>	

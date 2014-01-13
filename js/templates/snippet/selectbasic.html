@@ -1,0 +1,11 @@
+<!-- Select Basic -->
+<div class="form-group">
+	<label for="<%= id %>" class="col-sm-2 control-label">
+		<%= label %>
+	</label>
+	<div class="col-sm-9">
+		<select id="<%= id %>" name="<%= id %>" class="selectpicker show-tick" data-live-search="true"><% _.each(options, function(option) { %>
+			<option value="<%= option %>"><%= option %></option><% }); %>
+		</select>
+	</div>
+</div>

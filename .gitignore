@@ -1,0 +1,8 @@
+#Files and folders to ignore
+
+#All dir
+tmp/*
+renders/*
+cache/*
+
+config.xml
