@@ -24,7 +24,7 @@
 *}
 
 <div class="form-group">
-	<label for="form-field-4" class="col-sm-2 control-label">
+	<label for="form-field-4" class="col-sm-2 control-label required">
 		Module Display Name
 	</label>
 	<div class="col-sm-9">

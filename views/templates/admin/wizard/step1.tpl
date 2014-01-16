@@ -24,6 +24,7 @@
 *}
 
 <div id="step-1">
+	<form id="validFirstStep">
 	<!-- Name -->
 	{include file="./forms/name.tpl"}
 	<!-- Author -->
@@ -52,4 +53,5 @@
 	{include file="./forms/dependencies.tpl"}
 	<!-- Version Compliance -->
 	{include file="./forms/compliance.tpl"}
+	</form>
 </div>

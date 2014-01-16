@@ -29,8 +29,6 @@
 	{include file="./header.tpl"}
 {/if}
 
-	<h2><img src="{$module_dir}img/logo.png" alt="{l s='Module Generator' mod='modulegenerator'}<" border="0" /> {l s='Module Generator' mod='modulegenerator'}</h2>
-
 	<div class="panel panel-default">
 		<h3>
 			<i class="icon-cogs"></i>

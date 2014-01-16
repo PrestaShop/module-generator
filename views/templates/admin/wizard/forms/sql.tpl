@@ -37,10 +37,10 @@
 		<div class="switch_display hide">
 			<div class="clearfix form-group"></div>
 			<textarea placeholder="install SQL" id="form-field-8" name="sql_install" class="form-control textarea-animated"></textarea>
-			<span class="help-block"><i class="fa fa-info-circle"></i> Use PREFIX & ENGINE_DEFAULT</span>
+			<span class="help-block"><i class="icon-info-circle"></i> Use PREFIX & ENGINE_DEFAULT</span>
 			<div class="clearfix form-group"></div>
 			<textarea placeholder="uninstall SQL" id="form-field-9" name="sql_uninstall" class="form-control textarea-animated"></textarea>
-			<span class="help-block"><i class="fa fa-info-circle"></i> Use PREFIX & ENGINE_DEFAULT</span>
+			<span class="help-block"><i class="icon-info-circle"></i> Use PREFIX & ENGINE_DEFAULT</span>
 		</div>
 	</div>
 </div>

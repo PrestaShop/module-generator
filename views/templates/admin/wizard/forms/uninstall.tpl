@@ -36,7 +36,7 @@
 		<div class="switch_display hide">
 			<div class="clearfix form-group"></div>
 			<input type="text" class="form-control" id="form-field-7" name="module_uninstall" value="Are you sure you want to uninstall? You will lose all your settings!" placeholder="Are you sure you want to uninstall? You will lose all your settings!">
-			<span class="help-block"><i class="fa fa-info-circle"></i> Asking the administrator if he really does want to uninstall the module</span>
+			<span class="help-block"><i class="icon-info-circle"></i> Asking the administrator if he really does want to uninstall the module</span>
 		</div>
 	</div>
 </div>

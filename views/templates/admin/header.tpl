@@ -25,8 +25,18 @@
 
 <div class="page-head">
 	<h2 class="page-title">
-		{l s='Module generator' mod='modulegenerator'} (modulegenerator) 
+		{l s='Module Generator' mod='modulegenerator'}
 	</h2>
+	<ul class="breadcrumb page-breadcrumb">
+		<li>
+				<i class="icon-puzzle-piece"></i>Modules
+		</li>
+		<li>modulegenerator</li>
+		<li>
+			<i class="icon-wrench"></i>
+			Configurer
+		</li>
+	</ul>
 	<div class="page-bar toolbarBox">
 		<div class="btn-toolbar">
 			<ul class="cc_button nav nav-pills pull-right">
