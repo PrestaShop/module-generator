@@ -44,8 +44,10 @@
 	</li>
 </ul>
 
+{*
 <div class="progress progress-striped active">
 	<div class="progress-bar step-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
 		<span class="sr-only">0% {l s='Complete' mod='modulegenerator'}</span>
 	</div>
 </div>
+*}
