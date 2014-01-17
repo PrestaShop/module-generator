@@ -25,6 +25,25 @@ var Main = function () {
 	};
 	// function to custom select
 	var runCustomElement = function () {
+		// Hide ugly toolbar
+		j('table[class="table"]').each(function(){
+			j(this).hide();
+			j(this).next('div.clear').hide();
+		});
+
+		// Hide ugly multishop select
+		j('.multishop_toolbar').addClass("panel panel-default");
+		j('.shopList').removeClass("chzn-done").removeAttr("id").css("display", "block").next().remove();
+		cloneMulti = j(".multishop_toolbar").clone(true, true);
+		j(".multishop_toolbar:first").remove();
+		cloneMulti.find('.shopList').addClass('selectpicker show-menu-arrow').attr('data-live-search', 'true');
+		cloneMulti.insertBefore("#modulecontent");
+
+		/*
+		cloneActiveShop = j("input[name='activateModule']:first").clone();
+		cloneActiveShop.insertAfter("#select_translation");
+		*/
+
 		// Custom Select
 		j('.selectpicker').selectpicker();
 
@@ -36,18 +55,13 @@ var Main = function () {
 			});
 		});
 
-		j('table.table').each(function(){
-			j(this).hide();
-			j(this).next('div.clear').hide();
-		});
-
 		// Custom Textarea
 		j('.textarea-animated').autosize({append: "\n"});
 	};
 
 	var runSpecialElement = function () {
 		// Force lowercase
-		j('#form-field-1').keyup(function()
+		j('#modulename').keyup(function()
 		{
 			j(this).val(j(this).val().toLowerCase().replace(/ /g, '').replace(/[^a-z]/g, '') );
 		});
@@ -77,8 +91,10 @@ var Main = function () {
 			onLeaveStep: leaveStep,
 			onShowStep: checkStep,
 		});
+
 		var numberOfSteps = 0;
 		animateBar();
+		initValidator();
 	};
 
 	var animateBar = function (val) { 
@@ -90,28 +106,65 @@ var Main = function () {
 		j('.step-bar').css('width', valueNow + '%');
 	};
 
+	var initValidator = function () {
+		j.validator.setDefaults({
+			debug: true,
+			errorElement: "span", // contain the error msg in a span tag
+			errorClass: 'help-block',
+			errorPlacement: function (error, element) { // render error placement for each input type
+				if (element.attr("type") == "radio" || element.attr("type") == "checkbox") { // for chosen elements, need to insert the error after the chosen container
+					error.insertAfter($(element).closest('.form-group').children('div').children().last());
+				} else {
+					error.insertAfter(element);
+					// for other inputs, just perform default behavior
+				}
+			},
+			highlight: function (element) {
+				$(element).closest('.help-block').removeClass('valid');
+				// display OK icon
+				$(element).closest('.form-group').removeClass('has-success').addClass('has-error').find('.symbol').removeClass('ok').addClass('required');
+				// add the Bootstrap error class to the control group
+			},
+			unhighlight: function (element) { // revert the change done by hightlight
+				$(element).closest('.form-group').removeClass('has-error');
+				// set error class to the control group
+			},
+			success: function (label, element) {
+				label.addClass('help-block valid');
+				// mark the current input as valid and display OK icon
+				$(element).closest('.form-group').removeClass('has-error').addClass('has-success').find('.symbol').removeClass('required').addClass('ok');
+			}
+		});
+	};
+
 	var leaveStep = function (obj, context) {
 		j("#next-step").unbind("click");
 		j("#back-step").unbind("click");
+		p('leaveStep');
 		return validateSteps(obj, context);
 	};
 
 	var validateSteps = function (obj, context) {
-		var isStepValid = false;
+		var $firstForm = j("#validFirstStep");
+
 		stepNumber = context.fromStep;
 		nextStep = context.toStep;
+		p('validateSteps');
+		var isStepValid = true;
 
 		if (numberOfSteps !== nextStep) {
-			animateBar(nextStep);
-			isStepValid = true;
-			j("#next-step").removeClass('hide');
-			if (nextStep === 1) {
-				j("#back-step").fadeIn("fast").addClass('hide');
-			}
-			else {
-				j("#back-step").removeClass('hide');
-			}
-			return true;
+			if ($firstForm.valid()) {
+				$firstForm.validate().focusInvalid();
+				animateBar(nextStep);
+				j("#next-step").removeClass('hide');
+				if (nextStep === 1) {
+					j("#back-step").fadeIn("fast").addClass('hide');
+				}
+				else {
+					j("#back-step").removeClass('hide');
+				}
+				return true;
+			};
 		}
 		else
 		{
@@ -124,6 +177,7 @@ var Main = function () {
 
 	var checkStep = function (obj, context) {
 		var $wizardContent = j('#wizard');
+		p('checkStep');
 
 		j("#next-step").unbind("click").one("click", function (e) {
 			e.preventDefault();

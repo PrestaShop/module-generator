@@ -373,8 +373,8 @@ body {
 	color: inherit;
 }
 
-.nav-tabs>li>a {
-	background: #eeeeee;
+.bootstrap .multishop_toolbar {
+	font-size: inherit;
 }
 
 .bootstrap label.required:before {
@@ -384,6 +384,11 @@ body {
 	position: relative;
 	line-height: 12px;
 }
+
+.nav-tabs>li>a {
+	background: #eeeeee;
+}
+
 
 /* FONT AWESOME EXTRAS -------------------------- */
 .icon-power-off:before, .icon-off:before, .bootstrap .process-icon-off:before { content: "\f011"; }

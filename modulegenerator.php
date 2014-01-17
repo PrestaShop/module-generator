@@ -50,11 +50,11 @@ class Modulegenerator extends Module
 		if ($this->hasCache())
 			self::$tabs_cache = $this->getCache();
 
-		if (self::$tabs_cache == null && !is_array(self::$tabs_cache) && !$this->hasCache())
+		if (self::$tabs_cache === null && !is_array(self::$tabs_cache) && !$this->hasCache())
 		{
 			self::$tabs_cache = array();
 			if ($result = Db::getInstance()->executeS('
-				SELECT class_name AS optgroup, GROUP_CONCAT(class_name) AS options
+				SELECT class_name AS optgroup, GROUP_CONCAT(DISTINCT class_name) AS options
 				FROM '._DB_PREFIX_.'tab
 				WHERE module = ""
 				OR module IS NULL
@@ -74,7 +74,7 @@ class Modulegenerator extends Module
 
 	private function getLang()
 	{
-		if (self::$lang_cache == null && !is_array(self::$lang_cache))
+		if (self::$lang_cache === null && !is_array(self::$lang_cache))
 		{
 			self::$lang_cache = array();
 			if ($languages = Language::getLanguages())
@@ -209,7 +209,7 @@ class Modulegenerator extends Module
 			Tools::getValue('configure') === $this->name))
 			return;
 
-		// Call of Dirty 
+		// Call of Dirty
 		// technical for js include...
 		$html = '<script data-main="'.$this->js_path.'main-built.js" src="'.$this->js_path.'lib/require.js"></script>';
 		return $html;

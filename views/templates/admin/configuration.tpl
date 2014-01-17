@@ -28,8 +28,8 @@
 	<!-- Beautiful header -->
 	{include file="./header.tpl"}
 {/if}
-
-	<div class="panel panel-default">
+	<!-- Module content -->
+	<div id="modulecontent" class="panel panel-default">
 		<h3>
 			<i class="icon-cogs"></i>
 			{l s='Configuration' mod='modulegenerator'}

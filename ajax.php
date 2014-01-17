@@ -1,12 +1,11 @@
 <?php
-
-// include_once dirname(__FILE__).'/modulegenerator.php';
+include(dirname(__FILE__).'/../../config/config.inc.php');
 
 $renderPath = 'renders/';
 $sourcePath = 'sources/';
 
 // Get form data
-$params = $_POST['data'];
+$params = Tools::getValue('data');
 
 // Parse data
 parse_str($params, $output);
@@ -17,7 +16,7 @@ print_r($output);
 echo '</pre>';
 
 // Get html form
-$form = trim($_POST['form']);
+$form = trim(Tools::getValue('form'));
 
 $moduleName = strip_tags(strtolower($output['module_name']));
 $moduleNameCamel = ucfirst($moduleName);
@@ -164,6 +163,7 @@ elseif (strpos($moduleTab, 'quick') !== false)
 
 $tabsFuncInstall = $tabsFuncUninstall = $tabsInstall = $tabsUninstall ='';
 if ($moduleController === 1) {
+
 	$tabsFuncInstall = "\n\t/**
 	 * Install Tab
 	 * @return boolean
@@ -248,7 +248,7 @@ if ($moduleSQL === 1)
 	 */
 	private function uninstallSQL()
 	{
-		// Create database tables from install.sql
+		// Create database tables from uninstall.sql
 		if (!file_exists(".'$'."this->sql_path.self::UNINSTALL_SQL_FILE))
 			return false;
 
