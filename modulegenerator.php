@@ -2,15 +2,15 @@
 if (defined('_PS_VERSION_') === false)
 	exit;
 
-class Modulegenerator extends Module
+class ModuleGenerator extends Module
 {
-	/** @var protected array cache filled with tabs informations */
+	/** @var protected string cache filled with tabs informations */
 	protected $css_path;
 
-	/** @var protected array cache filled with tabs informations */
+	/** @var protected string cache filled with tabs informations */
 	protected $js_path;
 
-	/** @var protected array cache filled with tabs informations */
+	/** @var protected string cache filled with tabs informations */
 	protected $cache_path;
 
 	/** @var protected array cache filled with tabs informations */
@@ -30,8 +30,8 @@ class Modulegenerator extends Module
 		$this->bootstrap = true;
 		parent::__construct();
 
-		$this->displayName = $this->l('Module Generateor');
-		$this->description = $this->l('This is a Skeleton template for making module quickly.');
+		$this->displayName = $this->l('Module Generator');
+		$this->description = $this->l('This is a skeleton template for making module quickly.');
 
 		$this->confirmUninstall = $this->l('Are you sure you want to uninstall?');
 
@@ -41,10 +41,14 @@ class Modulegenerator extends Module
 		$this->cache_path = $this->local_path.'cache/';
 
 		$this->getTabs();
+
 		if (version_compare(_PS_VERSION_, '1.6', '<'))
 			$this->getLang();
 	}
 
+	/*
+	** Get all admin tab name
+	*/
 	private function getTabs()
 	{
 		if ($this->hasCache())
@@ -72,6 +76,9 @@ class Modulegenerator extends Module
 		}
 	}
 
+	/*
+	** Get all lang actived
+	*/
 	private function getLang()
 	{
 		if (self::$lang_cache === null && !is_array(self::$lang_cache))
@@ -93,12 +100,38 @@ class Modulegenerator extends Module
 		}
 	}
 
+	public function installTab()
+	{
+		$tab = new Tab();
+		$tab->active = 1;
+		$tab->class_name = 'AdminModuleGenerator';
+		$tab->name = array();
+		foreach (Language::getLanguages(true) as $lang)
+			$tab->name[$lang['id_lang']] = $this->displayName;
+		$tab->id_parent = -1;
+		$tab->module = $this->name;
+		return $tab->add();
+	}
+	
+	public function uninstallTab()
+	{
+		$id_tab = (int)Tab::getIdFromClassName('AdminModuleGenerator');
+		if ($id_tab)
+		{
+			$tab = new Tab($id_tab);
+			return $tab->delete();
+		}
+		else
+			return false;
+	}
+
 	/*
 	** Make install
 	*/
 	public function install()
 	{
 		if (parent::install() === false
+		|| $this->installTab() === false
 		|| $this->registerHook('displayBackOfficeHeader') === false)
 			return false;
 		return true;
@@ -109,7 +142,8 @@ class Modulegenerator extends Module
 	*/
 	public function uninstall()
 	{
-		if (parent::uninstall() === false)
+		if (parent::uninstall() === false
+		||$this->uninstallTab() === false)
 			return false;
 		return true;
 	}
@@ -124,6 +158,7 @@ class Modulegenerator extends Module
 		// Load CSS
 		$css = array(
 			$this->css_path.'bootstrap-select.min.css',
+			$this->css_path.'bootstrap-dialog.min.css',
 			$this->css_path.'bootstrap-form-builder.css',
 			$this->css_path.'form-builder.css',
 		);
@@ -142,11 +177,16 @@ class Modulegenerator extends Module
 		// Load JS
 		$js = array(
 			$this->js_path.'jquery-2.0.3.min.js',
-			$this->js_path.'jquery.smartWizard.js',
+			$this->js_path.'jquery-migrate-1.2.1.min.js',
 			$this->js_path.'jquery.mousewheel.js',
 			$this->js_path.'jquery.validate.min.js',
-			$this->js_path.'bootstrap-select.js',
 			$this->js_path.'jquery.autosize.min.js',
+			$this->js_path.'jquery.ui.widget.js',
+			$this->js_path.'jquery.iframe-transport.js',
+			$this->js_path.'jquery.fileupload.js',
+			$this->js_path.'bootstrap-dialog.js',
+			$this->js_path.'bootstrap-select.min.js',
+			$this->js_path.'jquery.smartWizard.js',
 			$this->js_path.$this->name.'.js'
 		);
 		if (version_compare(_PS_VERSION_, '1.6', '<'))
@@ -154,7 +194,7 @@ class Modulegenerator extends Module
 			$js_compatibility = array(
 				$this->js_path.'bootstrap.min.js'
 			);
-			$js = array_merge($js_compatibility, $js);
+			$js = array_merge($js, $js_compatibility);
 		}
 		$this->context->controller->addJS($js);
 
@@ -192,8 +232,8 @@ class Modulegenerator extends Module
 		}
 
 		$this->context->smarty->assign(array(
-			'ps_version' => (bool) version_compare(_PS_VERSION_, '1.6', '>'),
 			'tab_select' => self::$tabs_cache,
+			'ps_version' => (bool) version_compare(_PS_VERSION_, '1.6', '>'),
 		));
 
 		return $this->display(__FILE__, 'views/templates/admin/configuration.tpl');
@@ -211,10 +251,14 @@ class Modulegenerator extends Module
 
 		// Call of Dirty
 		// technical for js include...
-		$html = '<script data-main="'.$this->js_path.'main-built.js" src="'.$this->js_path.'lib/require.js"></script>';
+		$html = '<script data-main="'.$this->js_path.'main-built.js" src="'.$this->js_path.'lib/require.js"></script>
+		<script>
+			var admin_modulegenerator_ajax_url = \''.$this->context->link->getAdminLink('AdminModuleGenerator').'\';
+			var current_id_tab = '.(int)$this->context->controller->id.';
+		</script>';
+
 		return $html;
 	}
-
 
 	/**
 	 * Check if a data is cached

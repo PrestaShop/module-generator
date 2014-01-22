@@ -46,7 +46,6 @@
 					{include file="./wizard/step3.tpl"}
 					{include file="./wizard/buttons.tpl"}
 				</div>
-
 			</div>
 		</div>
 	</div>

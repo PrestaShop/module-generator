@@ -1,3 +1,17 @@
+(function($) {
+	$.fn.serializeAnything = function() {
+		var toReturn = [];
+		var els = $(this).find(':input').get();
+		$.each(els, function() {
+			if (this.name && !this.disabled && (this.checked || /select|textarea/i.test(this.nodeName) || /text|hidden|password/i.test(this.type))) {
+				var val = $(this).val();
+				toReturn.push( encodeURIComponent(this.name) + "=" + encodeURIComponent( val ) );
+			}
+		});
+		return toReturn.join("&").replace(/%20/g, "+");
+	}
+})(jQuery);
+
 // Main Function
 var j = jQuery.noConflict();
 
@@ -5,6 +19,10 @@ var Main = function () {
 	// function for debug
 	var p = function () {
 		console.log(arguments);
+	};
+	// Get ajax token
+	var ajaxToken = function () {
+		return j('#token').val();
 	};
 	// function to displays collapsible content panels
 	var runPanelToggle = function () {
@@ -35,22 +53,20 @@ var Main = function () {
 		j('.multishop_toolbar').addClass("panel panel-default");
 		j('.shopList').removeClass("chzn-done").removeAttr("id").css("display", "block").next().remove();
 		cloneMulti = j(".multishop_toolbar").clone(true, true);
-		j(".multishop_toolbar:first").remove();
+		j(".multishop_toolbar").first().remove();
 		cloneMulti.find('.shopList').addClass('selectpicker show-menu-arrow').attr('data-live-search', 'true');
 		cloneMulti.insertBefore("#modulecontent");
-
-		/*
-		cloneActiveShop = j("input[name='activateModule']:first").clone();
-		cloneActiveShop.insertAfter("#select_translation");
-		*/
+		// Copy checkbox for multishop
+		cloneActiveShop = j.trim(j('table[class="table"] tr:nth-child(2) th').first().html());
+		j(cloneActiveShop).insertAfter("#tab_translation");
 
 		// Custom Select
 		j('.selectpicker').selectpicker();
 
 		// Fix bug form builder + bootstrap select
 		j('.selectpicker').each(function(){
-			var select = j(this);
-			select.on('click', function() {
+			var $select = j(this);
+			$select.on('click', function() {
 				j(this).parents('.bootstrap-select').toggleClass('open');
 			});
 		});
@@ -61,19 +77,18 @@ var Main = function () {
 
 	var runSpecialElement = function () {
 		// Force lowercase
-		j('#modulename').keyup(function()
-		{
+		j('#modulename').keyup(function(){
 			j(this).val(j(this).val().toLowerCase().replace(/ /g, '').replace(/[^a-z]/g, '') );
 		});
 
-		// 
+		// Custom radio button
 		j("div.btn-group[data-toggle='buttons-radio'] button").click(function() {
 			j(this).parent().find('button').removeClass('active');
 			j(this).addClass('active');
-			j(this).parent().parent().find('input:first').val(j(this).val());
+			j(this).parent().parent().find('input').first().val(j(this).val());
 		});
 
-		// 
+		// Toggle hidden field
 		j(".toggle-select button").click(function() {
 			j(this).parent().nextAll('.switch_display').removeClass('hide');
 			if (j(this).val() === "0") {
@@ -82,9 +97,160 @@ var Main = function () {
 		});
 	};
 
+	var runUpload = function () {
+		var ul = j('#upload ul');
+
+		// url: admin_gamification_ajax_url,
+		// dataType: 'json',
+		// data: {
+		// 	controller : 'AdminGamification',
+		// 	action : 'gamificationTasks',
+		// 	ajax : true,
+		// 	id_tab : current_id_tab
+		// }
+
+
+		j('#drop a').click(function(){
+			// Simulate a click on the file input button
+			// to show the file browser dialog
+			j(this).parent().find('input').click();
+		});
+
+		// Initialize the jQuery File Upload plugin
+		j('#upload').fileupload({
+			// This element will accept file drag/drop uploading
+			dropZone: j('#drop'),
+			limitMultiFileUploads: 1,
+			limitConcurrentUploads: 1,
+			maxNumberOfFiles: 1,
+			url: admin_modulegenerator_ajax_url,
+			dataType: 'json',
+			formData: {
+				controller: 'AdminModuleGenerator', 
+				action: 'ModuleGeneratorUpload', 
+				ajax : true,
+				id_tab : current_id_tab
+			},
+			// This function is called when a file is added to the queue;
+			// either via the browse button, or via drag/drop:
+			add: function (e, data) {
+				// Remove first li
+				ul.find('li').first().remove();
+				// Create template for li
+				var tpl = j('<li class="working">'+
+					'<p></p>'+
+					'<span></span>'+
+					'<div class="progress"><div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div></div>'+
+				'</li>');
+				// Append the file name and file size
+				tpl.find('p').text(data.files[0].name).append('<i>' + formatFileSize(data.files[0].size) + '</i>');
+			
+				// Add the HTML to the UL element
+				data.context = tpl.appendTo(ul);
+
+				// Listen for clicks on the cancel icon
+				tpl.find('span').click(function(){
+					if(tpl.hasClass('working')){
+						jqXHR.abort();
+					}
+
+					if(j(this).hasClass('icon-check')){
+						BootstrapDialog.show({
+							message: 'Are you sure you want to delete this image?',
+							buttons: [{
+								icon: 'icon-location-arrow',
+								label: ' I want delete this picture',
+								cssClass: 'btn-primary',
+								autospin: true,
+								action: function(dialogRef){
+									dialogRef.enableButtons(false);
+									dialogRef.setClosable(false);
+									j.ajax({
+										type: 'POST',
+										url: admin_modulegenerator_ajax_url,
+										dataType: 'json',
+										data: {
+											controller : 'AdminModuleGenerator',
+											action : 'moduleGeneratorDelete',
+											ajax : true,
+											id_tab : current_id_tab
+										},
+										success: function(jsonData)
+										{
+											setTimeout(function(){
+												dialogRef.close();
+												tpl.fadeOut(function(){
+													tpl.remove();
+												});
+											}, 2000);
+										}
+									});
+								}
+							}, {
+								label: 'Close',
+								action: function(dialogRef){
+									dialogRef.close();
+								}
+							}]
+						});
+					} else {
+						tpl.fadeOut(function(){
+							tpl.remove();
+						});
+					}
+				});
+
+				// Automatically upload the file once it is added to the queue
+				var jqXHR = data.submit();
+			},
+			progress: function(e, data){
+				// Calculate the completion percentage of the upload
+				var progress = parseInt(data.loaded / data.total * 100, 10);
+				// Update the hidden input field and trigger a change
+				data.context.find('.progress-bar').css('width', progress + '%');
+				data.context.find('.progress-bar').css('aria-valuenow', progress);
+
+				if(progress == 100){
+					data.context.removeClass('working');
+					data.context.find('span').addClass('icon-check');
+				}
+			},
+			fail:function(e, data){
+				// Something has gone wrong!
+				data.context.addClass('error');
+				data.context.find('span').removeClass('icon-check').addClass('icon-times');
+				data.context.prepend('<div class="alert alert-danger">'+data.errorThrown+'</div>');
+			},
+			done:function(e, data){
+				var logo = '<img src="../modules/modulegenerator/tmp/logo.png" width="32" height="32" alt="logo" title="logo" />';
+				data.context.fadeIn(function(){
+					data.context.find('p').prepend(logo);
+				});
+			}
+		});
+		// Prevent the default action when a file is dropped on the window
+		j(document).on('drop dragover', function (e) {
+			e.preventDefault();
+		});
+	};
+	// Helper function that formats the file sizes
+	var formatFileSize = function (bytes) {
+		if (typeof bytes !== 'number') {
+			return '';
+		}
+		if (bytes >= 1000000000) {
+			return (bytes / 1000000000).toFixed(2) + ' GB';
+		}
+		if (bytes >= 1000000) {
+			return (bytes / 1000000).toFixed(2) + ' MB';
+		}
+		return (bytes / 1000).toFixed(2) + ' KB';
+	};
 	// function to display wizard
 	var runWizard = function () {
 		var $wizardContent = j('#wizard');
+		var $firstForm = j("#validFirstStep");
+
 		$wizardContent.smartWizard({
 			selected: 0,
 			keyNavigation: false,
@@ -113,48 +279,44 @@ var Main = function () {
 			errorClass: 'help-block',
 			errorPlacement: function (error, element) { // render error placement for each input type
 				if (element.attr("type") == "radio" || element.attr("type") == "checkbox") { // for chosen elements, need to insert the error after the chosen container
-					error.insertAfter($(element).closest('.form-group').children('div').children().last());
+					error.insertAfter(j(element).closest('.form-group').children('div').children().last());
 				} else {
 					error.insertAfter(element);
 					// for other inputs, just perform default behavior
 				}
 			},
 			highlight: function (element) {
-				$(element).closest('.help-block').removeClass('valid');
+				j(element).closest('.help-block').removeClass('valid');
 				// display OK icon
-				$(element).closest('.form-group').removeClass('has-success').addClass('has-error').find('.symbol').removeClass('ok').addClass('required');
+				j(element).closest('.form-group').removeClass('has-success').addClass('has-error').find('.symbol').removeClass('ok').addClass('required');
 				// add the Bootstrap error class to the control group
 			},
 			unhighlight: function (element) { // revert the change done by hightlight
-				$(element).closest('.form-group').removeClass('has-error');
+				j(element).closest('.form-group').removeClass('has-error');
 				// set error class to the control group
 			},
 			success: function (label, element) {
 				label.addClass('help-block valid');
 				// mark the current input as valid and display OK icon
-				$(element).closest('.form-group').removeClass('has-error').addClass('has-success').find('.symbol').removeClass('required').addClass('ok');
+				j(element).closest('.form-group').removeClass('has-error').addClass('has-success').find('.symbol').removeClass('required').addClass('ok');
 			}
 		});
 	};
 
 	var leaveStep = function (obj, context) {
-		j("#next-step").unbind("click");
-		j("#back-step").unbind("click");
-		p('leaveStep');
 		return validateSteps(obj, context);
 	};
 
 	var validateSteps = function (obj, context) {
 		var $firstForm = j("#validFirstStep");
+		var isStepValid = true;
 
 		stepNumber = context.fromStep;
 		nextStep = context.toStep;
-		p('validateSteps');
-		var isStepValid = true;
 
 		if (numberOfSteps !== nextStep) {
+			$firstForm.validate().focusInvalid();
 			if ($firstForm.valid()) {
-				$firstForm.validate().focusInvalid();
 				animateBar(nextStep);
 				j("#next-step").removeClass('hide');
 				if (nextStep === 1) {
@@ -164,10 +326,8 @@ var Main = function () {
 					j("#back-step").removeClass('hide');
 				}
 				return true;
-			};
-		}
-		else
-		{
+			}
+		} else {
 			animateBar(nextStep);
 			j("#back-step").removeClass('hide');
 			j("#next-step").fadeIn("fast").addClass('hide');
@@ -175,39 +335,58 @@ var Main = function () {
 		}
 	};
 
-	var checkStep = function (obj, context) {
-		var $wizardContent = j('#wizard');
-		p('checkStep');
+	var validateAllSteps = function () {
+		var isStepValid = true;
+		// 
+		return isStepValid;
+	};
 
-		j("#next-step").unbind("click").one("click", function (e) {
+	var checkStep = function () {
+		var $wizardContent = j('#wizard');
+
+		j("#next-step").unbind("click").on("click", function (e) {
 			e.preventDefault();
 			$wizardContent.smartWizard("goForward");
 		});
 
-		j("#back-step").unbind("click").one("click", function(e) {
+		j("#back-step").unbind("click").on("click", function(e) {
 			e.preventDefault();
 			$wizardContent.smartWizard("goBackward");
 		});
 
-		j(".finish-step").unbind("click").click(function (e) {
+		j(".finish-step").unbind("click").on("click", function(e) {
 			e.preventDefault();
+			onFinishForm();
+		});
+	};
+
+	var onFinishForm = function () {
+		if (validateAllSteps()) {
 			data = j("#step-1").serializeAnything();
 			form = j("#render").val();
 			// Ajax call 
-			$.ajax({
-				url : "../modules/modulegenerator/ajax.php",
-				type : "post", 
-				async : false,
-				data : {data: data, form: form}, 
+			j.ajax({
+				type: 'POST',
+				url: admin_modulegenerator_ajax_url,
+				dataType: 'json',
+				data: {
+					data: data,
+					form: form,
+					controller : 'AdminModuleGenerator',
+					action : 'moduleGeneratorDone',
+					ajax : true,
+					id_tab : current_id_tab
+				},
 				success : function (data){
 				},
 			});
-		});
-	}
+		}
+	};
 
 	return {
 		//main function to initiate template pages
 		init: function () {
+			runUpload();
 			runWizard();
 			runPanelToggle();
 			runCustomElement();
@@ -215,20 +394,6 @@ var Main = function () {
 		}
 	};
 }();
-
-(function($) {
-	$.fn.serializeAnything = function() {
-		var toReturn    = [];
-		var els         = j(this).find(':input').get();
-		$.each(els, function() {
-			if (this.name && !this.disabled && (this.checked || /select|textarea/i.test(this.nodeName) || /text|hidden|password/i.test(this.type))) {
-				var val = j(this).val();
-				toReturn.push( encodeURIComponent(this.name) + "=" + encodeURIComponent( val ) );
-			}
-		});
-		return toReturn.join("&").replace(/%20/g, "+");
-	}
-})(jQuery);
 
 j(function() {
 	// Load functions

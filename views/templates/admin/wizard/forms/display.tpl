@@ -28,6 +28,6 @@
 		Module Display Name
 	</label>
 	<div class="col-sm-9">
-		<input type="text" class="form-control" value="" id="form-field-5" name="module_display_name" placeholder="Display Name">
+		<input type="text" class="form-control required" value="" id="module_display_name" name="module_display_name" placeholder="Display Name">
 	</div>
 </div>

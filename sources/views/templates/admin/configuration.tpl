@@ -5,12 +5,14 @@
 	<!-- Beautiful header -->
 	{include file="./header.tpl"}
 {/if}
-
-	<h2><img src="{$module_dir}img/logo.png" alt="[text]" border="0" /> [text]</h2>
-	<div class="panel panel-default">
+	<!-- Module content -->
+	<div id="modulecontent" class="panel panel-default">
 		<h3>
 			<i class="icon-cogs"></i>
 			{l s='Configuration' mod='[module]'}
+			<div class="panel-tools">
+				<a class="btn btn-xs btn-link panel-collapse collapses"></a>
+			</div>
 		</h3>
 		<div class="form-group">
 			[form]

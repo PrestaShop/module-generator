@@ -2,8 +2,18 @@
 
 <div class="page-head">
 	<h2 class="page-title">
-		{l s='Configure [text]' mod='[module]'} ([module]) 
+		{l s='Configure [text]' mod='[module]'}
 	</h2>
+	<ul class="breadcrumb page-breadcrumb">
+		<li>
+				<i class="icon-puzzle-piece"></i>Modules
+		</li>
+		<li>[module]</li>
+		<li>
+			<i class="icon-wrench"></i>
+			{l s='Configure' mod='[module]'}
+		</li>
+	</ul>
 	<div class="page-bar toolbarBox">
 		<div class="btn-toolbar">
 			<ul class="cc_button nav nav-pills pull-right">

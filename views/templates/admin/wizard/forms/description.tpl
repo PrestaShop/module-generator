@@ -28,6 +28,6 @@
 		Module Description
 	</label>
 	<div class="col-sm-9">
-		<textarea placeholder="Module Description" id="form-field-6" name="module_description" class="form-control textarea-animated"></textarea>
+		<textarea placeholder="Module Description" id="module_description" name="module_description" class="form-control textarea-animated required"></textarea>
 	</div>
 </div>

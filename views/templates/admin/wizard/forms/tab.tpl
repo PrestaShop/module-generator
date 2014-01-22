@@ -28,8 +28,7 @@
 		Module Tab
 	</label>
 	<div class="col-sm-9">
-		<select id="form-field-2" name="module_tab" class="selectpicker show-menu-arrow show-tick" data-live-search="true">
-			<option value="-1">Nothing selected</option>
+		<select id="module_tab" name="module_tab" class="selectpicker show-menu-arrow show-tick required" data-live-search="true">
 			<option value="administration">Administration</option>
 			<option value="advertising_marketing">Advertising & Marketing</option>
 			<option value="analytics_stats">Analytics & Stats</option>
