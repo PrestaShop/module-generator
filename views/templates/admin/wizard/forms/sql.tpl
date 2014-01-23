@@ -25,24 +25,29 @@
 
 <div class="form-group">
 	<label for="form-field-4" class="col-sm-2 control-label">
-		Module SQL Install/Uninstall
+		{l s='Module SQL Install/Uninstall' mod='modulegenerator'}
 	</label>
 	<div class="col-sm-9">
-		<div class="btn-group toggle-select" data-toggle-name="need_sql_install" data-toggle="buttons-radio" >
-		 	 <button type="button" value="1" class="btn" data-toggle="button">Yes</button>
-		 	 <button type="button" value="0" class="btn active" data-toggle="button">No</button>
-		</div>
-		<input type="hidden" name="need_sql_install" value="0" />
-
+		<span class="switch prestashop-switch input-group col-lg-2">
+			<input type="radio" name="need_sql_install" id="need_sql_install_on" value="1"/>
+			<label for="need_sql_install_on" class="radioCheck">
+				<i class="color_success"></i> {l s='Yes' mod='modulegenerator'}
+			</label>
+			<input type="radio" name="need_sql_install" id="need_sql_install_off" value="0" checked="checked" />
+			<label for="need_sql_install_off" class="radioCheck">
+				<i class="color_danger"></i> {l s='No' mod='modulegenerator'}
+			</label>
+			<a class="slide-button btn"></a>
+		</span>
 		<div class="switch_display hide">
 			<div class="clearfix form-group"></div>
 			<textarea placeholder="install SQL" id="form-field-8" name="sql_install" class="form-control textarea-animated">CREATE TABLE `PREFIXmodulename` (
 
 ) ENGINE=ENGINE_DEFAULT DEFAULT CHARSET=utf8;</textarea>
-			<span class="help-block"><i class="icon-info-circle"></i> Use PREFIX & ENGINE_DEFAULT</span>
+			<span class="help-block"><i class="icon-info-circle"></i> {l s='Use PREFIX & ENGINE_DEFAULT' mod='modulegenerator'}</span>
 			<div class="clearfix form-group"></div>
 			<textarea placeholder="uninstall SQL" id="form-field-9" name="sql_uninstall" class="form-control textarea-animated">DROP TABLE `PREFIXmodulename`;</textarea>
-			<span class="help-block"><i class="icon-info-circle"></i> Use PREFIX</span>
+			<span class="help-block"><i class="icon-info-circle"></i> {l s='Use PREFIX' mod='modulegenerator'}</span>
 		</div>
 	</div>
 </div>

@@ -25,9 +25,9 @@
 
 <div class="form-group">
 	<label for="form-field-4" class="col-sm-2 control-label required">
-		Module Description
+		{l s='Module Description' mod='modulegenerator'}
 	</label>
 	<div class="col-sm-9">
-		<textarea placeholder="Module Description" id="module_description" name="module_description" class="form-control textarea-animated required"></textarea>
+		<textarea placeholder="{l s='Module Description' mod='modulegenerator'}" id="module_description" name="module_description" class="form-control textarea-animated required"></textarea>
 	</div>
 </div>

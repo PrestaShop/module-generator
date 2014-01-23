@@ -25,7 +25,7 @@
 
 <div class="form-group">
 	<label for="form-field-4" class="col-sm-2 control-label">
-		Module Version Compliance<br /><small>(min / max)</small>
+		{l s='Module Version Compliance' mod='modulegenerator'}<br /><small>(min / max)</small>
 	</label>
 	<div class="col-sm-9">
 		<select class="selectpicker show-menu-arrow  show-tick span2">

@@ -25,7 +25,7 @@
 
 <div class="form-group">
 	<label for="form-field-2" class="col-sm-2 control-label">
-		Add Hooks
+		{l s='Add Hooks' mod='modulegenerator'}
 	</label>
 	<div class="col-sm-9">
 		<select name="module_hook_front" class="selectpicker show-menu-arrow span2" multiple data-live-search="true">
@@ -102,8 +102,7 @@
 			-->
 		</select>
 
-		<select name="module_hook_back" class="selectpicker show-menu-arrow  show-tick span2" multiple data-live-search="true">
-			<option value="-1">Select Back Hooks</option>
+		<select name="module_hook_back" class="selectpicker show-menu-arrow span2" multiple data-live-search="true">
 			<optgroup label="General hooks">
 				<option value="displayBackOfficeHome">displayBackOfficeHome</option>
 				<option value="displayBackOfficeHeader">displayBackOfficeHeader</option>

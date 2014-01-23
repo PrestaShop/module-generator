@@ -27,7 +27,7 @@
 	<!-- Building Form -->
 	<div class="col-xs-12 col-sm-6 col-md-6">
 		<div class="clearfix">
-			<h2>Your Form</h2>
+			<h2>{l s='Your Form' mod='modulegenerator'}</h2>
 			<hr>
 			<div id="build">
 				<form id="target" class="form-horizontal">
@@ -38,7 +38,7 @@
 
 	<!-- Components -->
 	<div class="col-xs-12 col-sm-6 col-md-6 form-group">
-		<h2>Drag & Drop components</h2>
+		<h2>{l s='Drag & Drop components' mod='modulegenerator'}</h2>
 		<hr>
 		<div class="tabbable">
 			<ul class="nav nav-tabs" id="formtabs">

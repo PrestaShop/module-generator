@@ -25,10 +25,10 @@
 
 <div class="form-group">
 	<label for="form-field-1" class="col-sm-2 control-label required">
-		Module Name
+		{l s='Module Name' mod='modulegenerator'}
 	</label>
 	<div class="col-sm-9">
-		<input type="text" class="form-control required" value="" id="modulename" name="module_name" placeholder="Module Name">
-		<span class="help-block"><i class="icon-info-circle"></i> Technical name lowercase only.</span>
+		<input type="text" class="form-control required" value="" id="modulename" name="module_name" placeholder="{l s='Module Name' mod='modulegenerator'}">
+		<span class="help-block"><i class="icon-info-circle"></i> {l s='Technical name lowercase only.' mod='modulegenerator'}</span>
 	</div>
 </div>

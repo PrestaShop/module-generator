@@ -29,12 +29,12 @@
 	</h2>
 	<ul class="breadcrumb page-breadcrumb">
 		<li>
-				<i class="icon-puzzle-piece"></i>Modules
+			<i class="icon-puzzle-piece"></i>Modules
 		</li>
 		<li>modulegenerator</li>
 		<li>
 			<i class="icon-wrench"></i>
-			Configurer
+			{l s='Configuration' mod='modulegenerator'}
 		</li>
 	</ul>
 	<div class="page-bar toolbarBox">

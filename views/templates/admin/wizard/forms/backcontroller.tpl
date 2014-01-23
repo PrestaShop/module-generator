@@ -25,14 +25,20 @@
 
 <div class="form-group">
 	<label for="form-field-4" class="col-sm-2 control-label">
-		Module AdminController
+		{l s='Module AdminController' mod='modulegenerator'}
 	</label>
 	<div class="col-sm-9">
-		<div class="btn-group toggle-select" data-toggle-name="back_controller" data-toggle="buttons-radio">
-		 	 <button type="button" value="1" class="btn" data-toggle="button">Yes</button>
-		 	 <button type="button" value="0" class="btn active" data-toggle="button">No</button>
-		</div>
-		<input type="hidden" name="back_controller" value="0" />
+		<span class="switch prestashop-switch input-group col-lg-2">
+			<input type="radio" name="back_controller" id="back_controller_on" value="1"/>
+			<label for="back_controller_on" class="radioCheck">
+				<i class="color_success"></i> {l s='Yes' mod='modulegenerator'}
+			</label>
+			<input type="radio" name="back_controller" id="back_controller_off" value="0" checked="checked" />
+			<label for="back_controller_off" class="radioCheck">
+				<i class="color_danger"></i> {l s='No' mod='modulegenerator'}
+			</label>
+			<a class="slide-button btn"></a>
+		</span>
 		<div class="switch_display hide">
 			<div class="clearfix form-group"></div>
 			<select name="tabs_controller_back" class="selectpicker show-menu-arrow" multiple data-live-search="true">

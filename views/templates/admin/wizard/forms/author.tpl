@@ -25,9 +25,9 @@
 
 <div class="form-group">
 	<label for="form-field-4" class="col-sm-2 control-label required">
-		Module Author
+		{l s='Module Author' mod='modulegenerator'}
 	</label>
 	<div class="col-sm-9">
-		<input type="text" class="form-control required" value="PrestaShop" id="module_author" name="module_author" placeholder="Author">
+		<input type="text" class="form-control required" value="PrestaShop" id="module_author" name="module_author" placeholder="{l s='Module Author' mod='modulegenerator'}">
 	</div>
 </div>

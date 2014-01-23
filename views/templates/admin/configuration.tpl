@@ -33,9 +33,6 @@
 		<h3>
 			<i class="icon-cogs"></i>
 			{l s='Configuration' mod='modulegenerator'}
-			<div class="panel-tools">
-				<a class="btn btn-xs btn-link panel-collapse collapses"></a>
-			</div>
 		</h3>
 		<div class="form-group">
 			<div class="smart-wizard form-horizontal">

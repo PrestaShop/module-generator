@@ -1,12 +1,12 @@
 <form id="upload" method="post" enctype="multipart/form-data">
 	<div class="form-group">
 		<label for="form-field-1" class="col-sm-2 control-label">
-			Module Logo
+			{l s='Module Logo' mod='modulegenerator'}
 		</label>
 		<div class="col-sm-9">
 			<div id="drop">
-				Drop Here
-			<a>Browse</a>
+				{l s='Drop Here' mod='modulegenerator'}
+				<a>{l s='Browse' mod='modulegenerator'}</a>
 				<input type="file" name="upl" />
 			</div>
 			<ul>

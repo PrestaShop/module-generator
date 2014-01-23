@@ -20,10 +20,6 @@ var Main = function () {
 	var p = function () {
 		console.log(arguments);
 	};
-	// Get ajax token
-	var ajaxToken = function () {
-		return j('#token').val();
-	};
 	// function to displays collapsible content panels
 	var runPanelToggle = function () {
 		j('.panel-tools .panel-collapse').bind('click', function (e) {
@@ -50,23 +46,28 @@ var Main = function () {
 		});
 
 		// Hide ugly multishop select
-		j('.multishop_toolbar').addClass("panel panel-default");
-		j('.shopList').removeClass("chzn-done").removeAttr("id").css("display", "block").next().remove();
-		cloneMulti = j(".multishop_toolbar").clone(true, true);
-		j(".multishop_toolbar").first().remove();
-		cloneMulti.find('.shopList').addClass('selectpicker show-menu-arrow').attr('data-live-search', 'true');
-		cloneMulti.insertBefore("#modulecontent");
-		// Copy checkbox for multishop
-		cloneActiveShop = j.trim(j('table[class="table"] tr:nth-child(2) th').first().html());
-		j(cloneActiveShop).insertAfter("#tab_translation");
+		if (typeof(_PS_VERSION_) !== 'undefined') {
+			var version = _PS_VERSION_.substr(0,3);
+			if(version === '1.5') {
+				j('.multishop_toolbar').addClass("panel panel-default");
+				j('.shopList').removeClass("chzn-done").removeAttr("id").css("display", "block").next().remove();
+				cloneMulti = j(".multishop_toolbar").clone(true, true);
+				j(".multishop_toolbar").first().remove();
+				cloneMulti.find('.shopList').addClass('selectpicker show-menu-arrow').attr('data-live-search', 'true');
+				cloneMulti.insertBefore("#modulecontent");
+				// Copy checkbox for multishop
+				cloneActiveShop = j.trim(j('table[class="table"] tr:nth-child(2) th').first().html());
+				j(cloneActiveShop).insertAfter("#tab_translation");
+			}
+		}
 
 		// Custom Select
 		j('.selectpicker').selectpicker();
 
 		// Fix bug form builder + bootstrap select
 		j('.selectpicker').each(function(){
-			var $select = j(this);
-			$select.on('click', function() {
+			var select = j(this);
+			select.on('click', function() {
 				j(this).parents('.bootstrap-select').toggleClass('open');
 			});
 		});
@@ -81,17 +82,11 @@ var Main = function () {
 			j(this).val(j(this).val().toLowerCase().replace(/ /g, '').replace(/[^a-z]/g, '') );
 		});
 
-		// Custom radio button
-		j("div.btn-group[data-toggle='buttons-radio'] button").click(function() {
-			j(this).parent().find('button').removeClass('active');
-			j(this).addClass('active');
-			j(this).parent().parent().find('input').first().val(j(this).val());
-		});
-
 		// Toggle hidden field
-		j(".toggle-select button").click(function() {
+		j("span.switch label").click(function() {
 			j(this).parent().nextAll('.switch_display').removeClass('hide');
-			if (j(this).val() === "0") {
+			var $radio_check = j('#'+j(this).attr('for'));
+			if ($radio_check.val() === "0") {
 				j(this).parent().nextAll('.switch_display').addClass('hide');
 			}
 		});
@@ -99,16 +94,6 @@ var Main = function () {
 
 	var runUpload = function () {
 		var ul = j('#upload ul');
-
-		// url: admin_gamification_ajax_url,
-		// dataType: 'json',
-		// data: {
-		// 	controller : 'AdminGamification',
-		// 	action : 'gamificationTasks',
-		// 	ajax : true,
-		// 	id_tab : current_id_tab
-		// }
-
 
 		j('#drop a').click(function(){
 			// Simulate a click on the file input button
@@ -262,7 +247,6 @@ var Main = function () {
 		animateBar();
 		initValidator();
 	};
-
 	var animateBar = function (val) { 
 		if ((typeof val == 'undefined') || val == "") { 
 			val = 1;
@@ -271,7 +255,6 @@ var Main = function () {
 		var valueNow = Math.floor(100 / numberOfSteps * val);
 		j('.step-bar').css('width', valueNow + '%');
 	};
-
 	var initValidator = function () {
 		j.validator.setDefaults({
 			debug: true,

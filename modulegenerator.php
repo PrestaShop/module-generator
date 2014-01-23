@@ -132,7 +132,7 @@ class ModuleGenerator extends Module
 	{
 		if (parent::install() === false
 		|| $this->installTab() === false
-		|| $this->registerHook('displayBackOfficeHeader') === false)
+		|| $this->registerHook('DisplayBackOfficeHeader') === false)
 			return false;
 		return true;
 	}
@@ -161,14 +161,15 @@ class ModuleGenerator extends Module
 			$this->css_path.'bootstrap-dialog.min.css',
 			$this->css_path.'bootstrap-form-builder.css',
 			$this->css_path.'form-builder.css',
+			$this->css_path.$this->name.'.css'
 		);
 		if (version_compare(_PS_VERSION_, '1.6', '<'))
 		{
 			$css_compatibility = array(
 				$this->css_path.'bootstrap.min.css',
+				$this->css_path.'bootstrap.extend.css',
 				$this->css_path.'bootstrap-responsive.min.css',
 				$this->css_path.'font-awesome.min.css',
-				$this->css_path.$this->name.'.css'
 			);
 			$css = array_merge($css, $css_compatibility);
 		}
@@ -196,6 +197,7 @@ class ModuleGenerator extends Module
 			);
 			$js = array_merge($js, $js_compatibility);
 		}
+
 		$this->context->controller->addJS($js);
 
 		// Clean memory
@@ -243,10 +245,11 @@ class ModuleGenerator extends Module
 	** Display JS & CSS in BO header
 	*/
 	public function hookDisplayBackOfficeHeader($params) 
-	{
+	{		
 		// Load JS only if we configure the module
-		if(!(Tools::getValue('tab_module') === $this->tab && 
-			Tools::getValue('configure') === $this->name))
+		if(!((Tools::getValue('tab_module') === $this->tab 
+		|| Tools::getValue('controller') === 'AdminModules') 
+		&& Tools::getValue('configure') === $this->name))
 			return;
 
 		// Call of Dirty
@@ -256,7 +259,6 @@ class ModuleGenerator extends Module
 			var admin_modulegenerator_ajax_url = \''.$this->context->link->getAdminLink('AdminModuleGenerator').'\';
 			var current_id_tab = '.(int)$this->context->controller->id.';
 		</script>';
-
 		return $html;
 	}
 

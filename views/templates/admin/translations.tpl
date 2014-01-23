@@ -25,7 +25,7 @@
 
 <div class="clearfix"></div>
 <div class="panel">
-	<h3><i class="icon-cogs"></i> Configuration</h3>
+	<h3><i class="icon-cogs"></i> {l s='Configuration' mod='modulegenerator'}</h3>
 	<div id="tab_translation" class="input-group">
 		<select id="select_translation" name="select_translation" class="selectpicker show-menu-arrow" title-icon="icon-flag" title='Manage translations'>
 			{foreach $lang_select as $tabs}

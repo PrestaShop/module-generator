@@ -25,7 +25,7 @@
 
 <div class="form-group">
 	<label for="form-field-2" class="col-sm-2 control-label required">
-		Module Tab
+		{l s='Module Tab' mod='modulegenerator'}
 	</label>
 	<div class="col-sm-9">
 		<select id="module_tab" name="module_tab" class="selectpicker show-menu-arrow show-tick required" data-live-search="true">

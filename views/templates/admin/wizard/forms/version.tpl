@@ -25,7 +25,7 @@
 
 <div class="form-group">
 	<label for="form-field-3" class="col-sm-2 control-label">
-		Module Version
+		{l s='Module Version' mod='modulegenerator'}
 	</label>
 	<div class="col-sm-9">
 		<select id="form-field-3-1" name="module_version" class="selectpicker show-menu-arrow  show-tick span2">
