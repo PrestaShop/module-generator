@@ -36,7 +36,7 @@ class Generator
 	* @param string $file_type
 	* @return boolean Operation result
 	*/
-	public static function resize($src_file, $dst_file, $dst_width = 32, $dst_height = 32)
+	public static function resize($src_file, $dst_file, $dst_width = 32, $dst_height = 32, $file_type = 'png')
 	{
 		if (PHP_VERSION_ID < 50300)
 			clearstatcache();
@@ -46,8 +46,6 @@ class Generator
 		if (!file_exists($src_file) || !filesize($src_file))
 			return false;
 		list($src_width, $src_height, $type) = getimagesize($src_file);
-
-		$file_type = 'png';
 
 		if (!$src_width)
 			return false;
@@ -77,12 +75,10 @@ class Generator
 			return false;
 		
 		$dest_image = imagecreatetruecolor($dst_width, $dst_height);
-
 		imagealphablending($dest_image, false);
 		imagesavealpha($dest_image, true);
 		$transparent = imagecolorallocatealpha($dest_image, 255, 255, 255, 127);
 		imagefilledrectangle($dest_image, 0, 0, $dst_width, $dst_height, $transparent);
-
 		imagecopyresampled($dest_image, $src_image, (int)(($dst_width - $next_width) / 2), (int)(($dst_height - $next_height) / 2), 0, 0, $next_width, $next_height, $src_width, $src_height);
 		return (ImageManager::write($file_type, $dest_image, $dst_file));
 	}

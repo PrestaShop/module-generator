@@ -54,24 +54,29 @@ class AdminModuleGeneratorController extends ModuleAdminController
 	public function ajaxProcessModuleGeneratorUpload()
 	{
 		// A list of permitted file extensions
-		$allowed = array('png', 'jpg', 'gif');
+		$allowed = array('png', 'jpg', 'jpeg', 'gif');
 		if(isset($_FILES['upl']) && $_FILES['upl']['error'] == 0) {
-			$extension = pathinfo($_FILES['upl']['name'], PATHINFO_EXTENSION);
+			$upload_name = $_FILES['upl']['name'];
+			$extension = pathinfo($upload_name, PATHINFO_EXTENSION);
 			if(!in_array(strtolower($extension), $allowed)) {
 				header("HTTP/1.0 500 An error occurred while uploading this file");
 				echo '{"status":"An error occurred while uploading this file"}';
 				exit;
 			}
-
-			if(move_uploaded_file($_FILES['upl']['tmp_name'], $this->tmp_path.$_FILES['upl']['name'])) {
-				if (!Generator::resize($this->tmp_path.$_FILES['upl']['name'], $this->tmp_path.'logo.png')){
+			if(move_uploaded_file($_FILES['upl']['tmp_name'], $this->tmp_path.$upload_name)) {
+				if (!Generator::resize($this->tmp_path.$upload_name, $this->tmp_path.'logo.png')){
 					header("HTTP/1.0 500 An error occurred while copying image");
-					echo '{"status":"An error occurred while copying image: '.$_FILES['upl']['name'].'"}';
-				} elseif (!unlink($this->tmp_path.$_FILES['upl']['name'])) {
-					header("HTTP/1.0 500 An error occurred while delete image");
-					echo '{"status":"An error occurred while delete image: '.$_FILES['upl']['name'].'"}';
+					echo '{"status":"An error occurred while copying image: '.$upload_name.'"}';
+				} elseif (!Generator::resize($this->tmp_path.$upload_name, $this->tmp_path.'logo.gif', 16, 16, 'gif')){
+					header("HTTP/1.0 500 An error occurred while copying image");
+					echo '{"status":"An error occurred while copying image: '.$upload_name.'"}';
+				} elseif ($upload_name !== 'logo.png') {
+					if (!unlink($this->tmp_path.$upload_name)) {
+						header("HTTP/1.0 500 An error occurred while delete image");
+						echo '{"status":"An error occurred while delete image: '.$upload_name.'"}';
+					}
 				} else {
-					echo '{"status":"Success uploading '.$_FILES['upl']['name'].'"}';
+					echo '{"status":"Success uploading '.$upload_name.'"}';
 				}
 				exit;
 			}
@@ -83,16 +88,19 @@ class AdminModuleGeneratorController extends ModuleAdminController
 
 	public function ajaxProcessModuleGeneratorDelete()
 	{
-		if (!file_exists($this->tmp_path.'logo.png')) {
+		if (file_exists($this->tmp_path.'logo.png')) {
 			if (!unlink($this->tmp_path.'logo.png')) {
 				header("HTTP/1.0 500 An error occurred while delete image");
 				echo '{"status":"An error occurred while delete image: logo.png"}';
-			} else {
-				echo '{"status":"Success deleting logo.png"}';
 			}
 		}
-		header("HTTP/1.0 500 An error occurred while delete image");
-		echo '{"status":"An error occurred while delete image: logo.png"}';
+		if (file_exists($this->tmp_path.'logo.gif')) {
+			if (!unlink($this->tmp_path.'logo.gif')) {
+				header("HTTP/1.0 500 An error occurred while delete image");
+				echo '{"status":"An error occurred while delete image: logo.gif"}';
+			}
+		}
+		echo '{"status":"Success deleting logo.png"}';
 		exit;
 	}
 
@@ -643,7 +651,12 @@ $hookFuncFront$hookFuncBack
 		// Move uploaded logo
 		if (file_exists($this->tmp_path.'logo.png')) {
 			if (copy($this->tmp_path.'logo.png', $moduleDir.'logo.png')) {
-				unlink($this->tmp_path.'logo.png');
+				// unlink($this->tmp_path.'logo.png');
+			}
+		}
+		if (file_exists($this->tmp_path.'logo.gif')) {
+			if (copy($this->tmp_path.'logo.gif', $moduleDir.'logo.gif')) {
+				// unlink($this->tmp_path.'logo.gif');
 			}
 		}
 

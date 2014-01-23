@@ -92,6 +92,66 @@ var Main = function () {
 		});
 	};
 
+	var loadModal = function (ul) {
+		var loader = '<div class="progress">'+
+		'<div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>'+
+		'</div>';
+		var reload = '<div class="bootstrap-dialog-message">'+
+		'<span>Thank you for your patience during the image deletion process</span>'+
+		loader+'</div>';
+
+		BootstrapDialog.show({
+			message: '<span>Are you sure you want to delete this image?</span>',
+			buttons: [{
+				icon: 'icon-location-arrow',
+				label: ' I want delete this picture',
+				cssClass: 'btn-primary',
+				autospin: true,
+				action: function(dialogRef) {
+					dialogRef.enableButtons(false);
+					dialogRef.setClosable(false);
+					dialogRef.getModalFooter().hide();
+					dialogRef.getModalBody().html(reload);
+					j.ajax({
+						type: 'POST',
+						url: admin_modulegenerator_ajax_url,
+						dataType: 'json',
+						timeout: 2000,
+						data: {
+							controller : 'AdminModuleGenerator',
+							action : 'moduleGeneratorDelete',
+							ajax : true,
+							id_tab : current_id_tab
+						},
+						success: function(jsonData)
+						{
+							dialogRef.getModalBody().children().children().next().children().css('width', '100%');
+							dialogRef.getModalBody().children().children().next().children().attr('aria-valuenow', '100');
+							setTimeout(function(){
+								dialogRef.close();
+								ul.fadeOut(function(){
+									ul.find('li').first().remove();
+								});
+							}, 1000);
+						},
+						error: function (xhr, ajaxOptions, thrownError) {
+							alert(xhr.status);
+							alert(thrownError);
+							setTimeout(function(){
+								dialogRef.close();
+							}, 2000);
+						}
+					});
+				}
+			}, {
+				label: 'Close',
+				action: function(dialogRef){
+					dialogRef.close();
+				}
+			}]
+		});
+	}
+
 	var runUpload = function () {
 		var ul = j('#upload ul');
 
@@ -140,44 +200,7 @@ var Main = function () {
 					}
 
 					if(j(this).hasClass('icon-check')){
-						BootstrapDialog.show({
-							message: 'Are you sure you want to delete this image?',
-							buttons: [{
-								icon: 'icon-location-arrow',
-								label: ' I want delete this picture',
-								cssClass: 'btn-primary',
-								autospin: true,
-								action: function(dialogRef){
-									dialogRef.enableButtons(false);
-									dialogRef.setClosable(false);
-									j.ajax({
-										type: 'POST',
-										url: admin_modulegenerator_ajax_url,
-										dataType: 'json',
-										data: {
-											controller : 'AdminModuleGenerator',
-											action : 'moduleGeneratorDelete',
-											ajax : true,
-											id_tab : current_id_tab
-										},
-										success: function(jsonData)
-										{
-											setTimeout(function(){
-												dialogRef.close();
-												tpl.fadeOut(function(){
-													tpl.remove();
-												});
-											}, 2000);
-										}
-									});
-								}
-							}, {
-								label: 'Close',
-								action: function(dialogRef){
-									dialogRef.close();
-								}
-							}]
-						});
+						loadModal(ul);
 					} else {
 						tpl.fadeOut(function(){
 							tpl.remove();
@@ -193,7 +216,7 @@ var Main = function () {
 				var progress = parseInt(data.loaded / data.total * 100, 10);
 				// Update the hidden input field and trigger a change
 				data.context.find('.progress-bar').css('width', progress + '%');
-				data.context.find('.progress-bar').css('aria-valuenow', progress);
+				data.context.find('.progress-bar').attr('aria-valuenow', progress);
 
 				if(progress == 100){
 					data.context.removeClass('working');
