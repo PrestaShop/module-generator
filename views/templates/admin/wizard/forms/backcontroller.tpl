@@ -43,9 +43,9 @@
 			<div class="clearfix form-group"></div>
 			<select name="tabs_controller_back" class="selectpicker show-menu-arrow" multiple data-live-search="true">
 				{foreach $tab_select as $tabs => $tab}
-				<optgroup label="{$tabs}">
+				<optgroup label="{$tabs|escape:'htmlall':'UTF-8'}">
 					{foreach $tab as $key => $value}
-					<option value="{$value}">{$value}</option>
+					<option value="{$value|escape:'htmlall':'UTF-8'}">{$value|escape:'htmlall':'UTF-8'}</option>
 					{/foreach}
 				</optgroup>
 				{/foreach}

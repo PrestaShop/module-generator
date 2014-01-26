@@ -1,4 +1,29 @@
 <?php
+/*
+* 2007-2014 PrestaShop
+*
+* NOTICE OF LICENSE
+*
+* This source file is subject to the Open Software License (OSL 3.0)
+* that is bundled with this package in the file LICENSE.txt.
+* It is also available through the world-wide-web at this URL:
+* http://opensource.org/licenses/osl-3.0.php
+* If you did not receive a copy of the license and are unable to
+* obtain it through the world-wide-web, please send an email
+* to license@prestashop.com so we can send you a copy immediately.
+*
+* DISCLAIMER
+*
+* Do not edit or add to this file if you wish to upgrade PrestaShop to newer
+* versions in the future. If you wish to customize PrestaShop for your
+* needs please refer to http://www.prestashop.com for more information.
+*
+*  @author PrestaShop SA <contact@prestashop.com>
+*  @copyright  2007-2014 PrestaShop SA
+*  @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+*  International Registered Trademark & Property of PrestaShop SA
+*/
+
 if (defined('_PS_VERSION_') === false)
 	exit;
 
@@ -19,7 +44,7 @@ class ModuleGenerator extends Module
 	/** @var protected array cache filled with lang informations */
 	protected static $lang_cache;
 
-	function __construct()
+	public function __construct()
 	{
 		$this->name = 'modulegenerator';
 		$this->tab = 'administration';
@@ -62,8 +87,7 @@ class ModuleGenerator extends Module
 				FROM '._DB_PREFIX_.'tab
 				WHERE module = ""
 				OR module IS NULL
-				GROUP BY id_parent')
-			)
+				GROUP BY id_parent'))
 			{
 				foreach ($result as $row)
 				{
@@ -89,9 +113,9 @@ class ModuleGenerator extends Module
 				foreach ($languages as $row)
 				{
 					$exprow = explode(' (', $row['name']);
-					$subtitle = (isset($exprow[1]) ? trim(substr($exprow[1], 0, -1)) : '');
+					$subtitle = (isset($exprow[1]) ? trim(Tools::substr($exprow[1], 0, -1)) : '');
 					self::$lang_cache[$row['iso_code']] = array (
-						'title' => trim($exprow[0]), 
+						'title' => trim($exprow[0]),
 						'subtitle' => $subtitle
 					);
 				}
@@ -112,7 +136,7 @@ class ModuleGenerator extends Module
 		$tab->module = $this->name;
 		return $tab->add();
 	}
-	
+
 	public function uninstallTab()
 	{
 		$id_tab = (int)Tab::getIdFromClassName('AdminModuleGenerator');
@@ -143,7 +167,7 @@ class ModuleGenerator extends Module
 	public function uninstall()
 	{
 		if (parent::uninstall() === false
-		||$this->uninstallTab() === false)
+		|| $this->uninstallTab() === false)
 			return false;
 		return true;
 	}
@@ -235,7 +259,7 @@ class ModuleGenerator extends Module
 
 		$this->context->smarty->assign(array(
 			'tab_select' => self::$tabs_cache,
-			'ps_version' => (bool) version_compare(_PS_VERSION_, '1.6', '>'),
+			'ps_version' => (bool)version_compare(_PS_VERSION_, '1.6', '>'),
 		));
 
 		return $this->display(__FILE__, 'views/templates/admin/configuration.tpl');
@@ -244,11 +268,11 @@ class ModuleGenerator extends Module
 	/*
 	** Display JS & CSS in BO header
 	*/
-	public function hookDisplayBackOfficeHeader($params) 
-	{		
+	public function hookDisplayBackOfficeHeader()
+	{
 		// Load JS only if we configure the module
-		if(!((Tools::getValue('tab_module') === $this->tab 
-		|| Tools::getValue('controller') === 'AdminModules') 
+		if (!((Tools::getValue('tab_module') === $this->tab
+		|| Tools::getValue('controller') === 'AdminModules')
 		&& Tools::getValue('configure') === $this->name))
 			return;
 
@@ -285,9 +309,9 @@ class ModuleGenerator extends Module
 		$get_cache_name = $this->cache_path.'tabs_cache.cache';
 		if (file_exists($get_cache_name))
 		{
-			$cacheTime = filectime($get_cache_name);
+			$cache_time = filectime($get_cache_name);
 			$livetime = (int)$time * 60;
-			return ($cacheTime + $livetime < time());
+			return ($cache_time + $livetime < time());
 		}
 		return true;
 	}
@@ -300,7 +324,7 @@ class ModuleGenerator extends Module
 	public function getCache()
 	{
 		if (file_exists($this->cache_path.'tabs_cache.cache'))
-			return unserialize(file_get_contents($this->cache_path.'tabs_cache.cache'));
+			return unserialize(Tools::file_get_contents($this->cache_path.'tabs_cache.cache'));
 	}
 
 	/**

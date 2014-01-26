@@ -42,7 +42,7 @@ class Generator
 			clearstatcache();
 		else
 			clearstatcache(true, $src_file);
-		
+
 		if (!file_exists($src_file) || !filesize($src_file))
 			return false;
 		list($src_width, $src_height, $type) = getimagesize($src_file);
@@ -73,27 +73,31 @@ class Generator
 
 		if (!ImageManager::checkImageMemoryLimit($src_file))
 			return false;
-		
+
 		$dest_image = imagecreatetruecolor($dst_width, $dst_height);
 		imagealphablending($dest_image, false);
 		imagesavealpha($dest_image, true);
 		$transparent = imagecolorallocatealpha($dest_image, 255, 255, 255, 127);
 		imagefilledrectangle($dest_image, 0, 0, $dst_width, $dst_height, $transparent);
-		imagecopyresampled($dest_image, $src_image, (int)(($dst_width - $next_width) / 2), (int)(($dst_height - $next_height) / 2), 0, 0, $next_width, $next_height, $src_width, $src_height);
+
+		$dst_x = (($dst_width - $next_width) / 2);
+		$dst_y = (($dst_height - $next_height) / 2);
+		imagecopyresampled($dest_image, $src_image, (int)$dst_x, (int)$dst_y, 0, 0, $next_width, $next_height, $src_width, $src_height);
 		return (ImageManager::write($file_type, $dest_image, $dst_file));
 	}
 
 	/**
 	 * Remplace contents
 	 *
-	 * @param array $sourceDest Array with the key as the value to replace the value as content
+	 * @param array $source_dest Array with the key as the value to replace the value as content
 	 * @param string $file File in which we will make replacement
 	 * @return void
 	 */
-	public static function replaceVar(array $sourceDest, $file) {
-		$template = strtr(file_get_contents($file), $sourceDest);
+	public static function replaceVar(array $source_dest, $file)
+	{
+		$template = strtr(Tools::file_get_contents($file), $source_dest);
 		file_put_contents($file, $template);
-		unset($template, $sourceDest, $file);
+		unset($template, $source_dest, $file);
 	}
 
 	/**
@@ -113,8 +117,9 @@ class Generator
 			);
 			foreach ($iterator as $file)
 			{
-				if ($file->isDir()) {
-					if(!is_dir($dest.DIRECTORY_SEPARATOR.$iterator->getSubPathName()))
+				if ($file->isDir())
+				{
+					if (!is_dir($dest.DIRECTORY_SEPARATOR.$iterator->getSubPathName()))
 						mkdir($dest.DIRECTORY_SEPARATOR.$iterator->getSubPathName());
 				}
 				else
@@ -157,9 +162,9 @@ class Generator
 			unlink($path);
 	}
 
-	public static function standardTPL($moduleName, $hookTPL, $val)
+	public static function standardTPL($module_name, $hook_tpl, $val)
 	{
-		return "if (".'$'."this->isCached('$moduleName$val.tpl', ".'$'."this->getCacheId()) === false)
+		return "if (".'$'."this->isCached('$module_name$val.tpl', ".'$'."this->getCacheId()) === false)
 		{
 			".'$'."this->smarty->assign(array(
 
@@ -169,6 +174,6 @@ class Generator
 		// Clean memory
 		unset(".'$'."params);
 
-		return ".'$'."this->display(__FILE__, '$hookTPL$moduleName$val.tpl', ".'$'."this->getCacheId());";
+		return ".'$'."this->display(__FILE__, '$hook_tpl$module_name$val.tpl', ".'$'."this->getCacheId());";
 	}
 }

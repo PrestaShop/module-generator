@@ -1,3 +1,12 @@
+/*
+ * jQuery File Upload Plugin 5.40.0
+ * https://github.com/minikomi/Bootstrap-Form-Builder/
+ *
+ * Copyright 2012, Adam Moore
+ *
+ * Licensed under the MIT license:
+ * http://www.opensource.org/licenses/MIT
+ */
 define(function(require) {
   var formname               = require('text!templates/snippet/formname.html')
   , prependedtext            = require('text!templates/snippet/prependedtext.html')

@@ -28,13 +28,13 @@ include_once(dirname(__FILE__).'/../../classes/Generator.php');
 
 class AdminModuleGeneratorController extends ModuleAdminController
 {
-	/** @var protected string tmp module web path (eg. '/shop/modules/modulename/tmp/') */
+	/** @var protected string tmp module web path (eg. '/shop/modules/module_name/tmp/') */
 	protected $module_path;
-	/** @var protected string tmp module web path (eg. '/shop/modules/modulename/tmp/') */
+	/** @var protected string tmp module web path (eg. '/shop/modules/module_name/tmp/') */
 	protected $tmp_path;
-	/** @var protected string tmp module web path (eg. '/shop/modules/modulename/tmp/') */
+	/** @var protected string tmp module web path (eg. '/shop/modules/module_name/tmp/') */
 	protected $render_path;
-	/** @var protected string tmp module web path (eg. '/shop/modules/modulename/tmp/') */
+	/** @var protected string tmp module web path (eg. '/shop/modules/module_name/tmp/') */
 	protected $source_path;
 
 	public function __construct()
@@ -55,29 +55,38 @@ class AdminModuleGeneratorController extends ModuleAdminController
 	{
 		// A list of permitted file extensions
 		$allowed = array('png', 'jpg', 'jpeg', 'gif');
-		if(isset($_FILES['upl']) && $_FILES['upl']['error'] == 0) {
+		if (isset($_FILES['upl']) && $_FILES['upl']['error'] === 0)
+		{
 			$upload_name = $_FILES['upl']['name'];
 			$extension = pathinfo($upload_name, PATHINFO_EXTENSION);
-			if(!in_array(strtolower($extension), $allowed)) {
+			if (!in_array(Tools::strtolower($extension), $allowed))
+			{
 				header("HTTP/1.0 500 An error occurred while uploading this file");
 				echo '{"status":"An error occurred while uploading this file"}';
 				exit;
 			}
-			if(move_uploaded_file($_FILES['upl']['tmp_name'], $this->tmp_path.$upload_name)) {
-				if (!Generator::resize($this->tmp_path.$upload_name, $this->tmp_path.'logo.png')){
+			if (move_uploaded_file($_FILES['upl']['tmp_name'], $this->tmp_path.$upload_name))
+			{
+				if (!Generator::resize($this->tmp_path.$upload_name, $this->tmp_path.'logo.png'))
+				{
 					header("HTTP/1.0 500 An error occurred while copying image");
 					echo '{"status":"An error occurred while copying image: '.$upload_name.'"}';
-				} elseif (!Generator::resize($this->tmp_path.$upload_name, $this->tmp_path.'logo.gif', 16, 16, 'gif')){
+				}
+				elseif (!Generator::resize($this->tmp_path.$upload_name, $this->tmp_path.'logo.gif', 16, 16, 'gif'))
+				{
 					header("HTTP/1.0 500 An error occurred while copying image");
 					echo '{"status":"An error occurred while copying image: '.$upload_name.'"}';
-				} elseif ($upload_name !== 'logo.png') {
-					if (!unlink($this->tmp_path.$upload_name)) {
+				}
+				elseif ($upload_name !== 'logo.png')
+				{
+					if (!unlink($this->tmp_path.$upload_name))
+					{
 						header("HTTP/1.0 500 An error occurred while delete image");
 						echo '{"status":"An error occurred while delete image: '.$upload_name.'"}';
 					}
-				} else {
-					echo '{"status":"Success uploading '.$upload_name.'"}';
 				}
+				else
+					echo '{"status":"Success uploading '.$upload_name.'"}';
 				exit;
 			}
 		}
@@ -88,14 +97,18 @@ class AdminModuleGeneratorController extends ModuleAdminController
 
 	public function ajaxProcessModuleGeneratorDelete()
 	{
-		if (file_exists($this->tmp_path.'logo.png')) {
-			if (!unlink($this->tmp_path.'logo.png')) {
+		if (file_exists($this->tmp_path.'logo.png'))
+		{
+			if (!unlink($this->tmp_path.'logo.png'))
+			{
 				header("HTTP/1.0 500 An error occurred while delete image");
 				echo '{"status":"An error occurred while delete image: logo.png"}';
 			}
 		}
-		if (file_exists($this->tmp_path.'logo.gif')) {
-			if (!unlink($this->tmp_path.'logo.gif')) {
+		if (file_exists($this->tmp_path.'logo.gif'))
+		{
+			if (!unlink($this->tmp_path.'logo.gif'))
+			{
 				header("HTTP/1.0 500 An error occurred while delete image");
 				echo '{"status":"An error occurred while delete image: logo.gif"}';
 			}
@@ -120,69 +133,72 @@ class AdminModuleGeneratorController extends ModuleAdminController
 		// Get html form
 		$form = trim(Tools::getValue('form'));
 
-		$moduleName = strip_tags(strtolower($output['module_name']));
-		$moduleNameCamel = ucfirst($moduleName);
+		$module_name = strip_tags(Tools::strtolower($output['module_name']));
+		$module_name_camel = Tools::ucfirst($module_name);
 
-		$moduleDir = $this->render_path.$moduleName.'/';
-		$sqlDir = $this->render_path.$moduleName.'/sql/';
-		$templateDir = $moduleDir.'views/templates/';
-		$hookDir = $templateDir.'hook/';
-		$hookTPL = 'views/templates/hook/';
+		$module_dir = $this->render_path.$module_name.'/';
+		$sql_dir = $this->render_path.$module_name.'/sql/';
+		$template_dir = $module_dir.'views/templates/';
+		$hook_dir = $template_dir.'hook/';
+		$hook_tpl = 'views/templates/hook/';
 
-		$moduleController = (int)$output['back_controller'];
-		$moduleTabController = strip_tags($output['tabs_controller_back']);
+		$module_controller = (int)$output['back_controller'];
+		$module_controller = strip_tags($output['tabs_controller_back']);
 
-		$moduleSQL = (int)$output['need_sql_install'];
-		$moduleSQLInstall = $output['sql_install'];
-		$moduleSQLUninstall = $output['sql_uninstall'];
+		$module_sql = (int)$output['need_sql_install'];
+		$module_sql_install = $output['sql_install'];
+		$module_sql_uninstall = $output['sql_uninstall'];
 
-		$moduleTab = strip_tags(strtolower($output['module_tab']));
-		$moduleVersion = (int)$output['module_version'].'.'.(int)$output['module_version_func'].'.'.(int)$output['module_version_rev'];
-		$moduleAuthor = strip_tags($output['module_author']);
-		$moduleInstance = (int)$output['need_instance'];
+		$module_tab = strip_tags(Tools::strtolower($output['module_tab']));
+		$module_version = (int)$output['module_version'].'.'.(int)$output['module_version_func'].'.'.(int)$output['module_version_rev'];
+		$module_author = strip_tags($output['module_author']);
+		$module_instance = (int)$output['need_instance'];
 
-		$moduleDisplay = strip_tags($output['module_display_name']);
-		$moduleDesc = strip_tags($output['module_description']);
+		$module_display = strip_tags($output['module_display_name']);
+		$module_desc = strip_tags($output['module_description']);
 
-		$moduleUninstall = (int)$output['confirm_uninstall'];
-		$moduleUninstallText = strip_tags($output['module_uninstall']);
+		$module_uninstall = (int)$output['confirm_uninstall'];
+		$module_uninstall_text = strip_tags($output['module_uninstall']);
 
 		$uninstall = '';
-		if ($moduleUninstall === 1)
-			$uninstall = "\n\n\t\t".'$'."this->confirmUninstall = ".'$'."this->l('$moduleUninstallText');";
+		if ($module_uninstall === 1)
+			$uninstall = "\n\n\t\t".'$'."this->confirmUninstall = ".'$'."this->l('$module_uninstall_text');";
 
-		$hookFront = strip_tags($output['module_hook_front']);
-		$hookBack = strip_tags($output['module_hook_back']);
+		$hook_front = strip_tags($output['module_hook_front']);
+		$hook_back = strip_tags($output['module_hook_back']);
 
-		$hookInstall = $hookFuncFront = $hookFuncBack = '';
-if ($hookFront !== 'null') {
-	$explodeFront = explode(',', $hookFront);
-	foreach($explodeFront as $val) {
-		$hookInstall .= "\n\t\t\t|| ".'$'."this->registerHook('$val') === false";
-	}
+		$hook_install = $hook_func_front = $hook_func_front = '';
+if ($hook_front !== 'null')
+{
+	$explode_front = explode(',', $hook_front);
+	foreach ($explode_front as $val)
+		$hook_install .= "\n\t\t\t|| ".'$'."this->registerHook('$val') === false";
 
-	$hookFuncFront .= "\n\t/**
+	$hook_func_front .= "\n\t/**
 	** FRONT HOOK
 	*/
 	";
 
-	$haveLeft = false;
-	foreach($explodeFront as $val) {
-	$isLeft = $isRight = $isRight = $isHeader = $isContent = '';
-	if ($val === 'displayLeftColumn') {
-		$haveLeft = true;
-		$isLeft = Generator::standardTPL($moduleName, $hookTPL, $val);
+	$have_left = false;
+	foreach ($explode_front as $val)
+	{
+	$is_left = $is_right = $is_right = $is_header = $is_content = '';
+	if ($val === 'displayLeftColumn')
+	{
+		$have_left = true;
+		$is_left = Generator::standardTPL($module_name, $hook_tpl, $val);
 	}
-	elseif ($val === 'displayRightColumn') {
-		if ($haveLeft === true) {
-			$isRight = "return ".'$'."this->hookDisplayLeftColumn(".'$'."params);";
-		} else { 
-			$isRight = Generator::standardTPL($moduleName, $hookTPL, $val);
-		}
-		$haveLeft = false;
+	elseif ($val === 'displayRightColumn')
+	{
+		if ($have_left === true)
+			$is_right = "return ".'$'."this->hookDisplayLeftColumn(".'$'."params);";
+		else
+			$is_right = Generator::standardTPL($module_name, $hook_tpl, $val);
+		$have_left = false;
 	}
-	elseif ($val === 'displayHeader') {
-		$isHeader = "// Load CSS
+	elseif ($val === 'displayHeader')
+	{
+		$is_header = "// Load CSS
 		".'$'."css = array(
 			".'$'."this->css_path.".'$'."this->name.'.css'
 		);
@@ -197,40 +213,39 @@ if ($hookFront !== 'null') {
 		// Clean memory !
 		unset(".'$'."js, ".'$'."css);";
 	}
-	elseif (strpos($val, 'action') !== false) {
-		$isContent = '';
-	}
-	else {
-		$isContent = Generator::standardTPL($moduleName, $hookTPL, $val);
-	}
+	elseif (strpos($val, 'action') !== false)
+		$is_content = '';
+	else
+		$is_content = Generator::standardTPL($module_name, $hook_tpl, $val);
 
-	$hookFuncFront .= "public function hook$val(".'$'."params)
+	$hook_func_front .= "public function hook$val(".'$'."params)
 	{
 		// Check if the module is active
 		if (!".'$'."this->active)
 			return;
 
-		$isHeader$isLeft$isRight$isContent
+		$is_header$is_left$is_right$is_content
 	}\n\n\t";
 	}
 
-	if ($hookBack === 'null')
-		$hookInstall .= ')';
+	if ($hook_back === 'null')
+		$hook_install .= ')';
 }
 
-if ($hookBack !== 'null') {
-	$explodeBack = explode(',', $hookBack);
-	foreach($explodeBack as $val) {
-		$hookInstall .= "\n\t\t\t|| ".'$'."this->registerHook('$val') === false";
-	}
+if ($hook_back !== 'null')
+{
+	$explode_back = explode(',', $hook_back);
+	foreach ($explode_back as $val)
+		$hook_install .= "\n\t\t\t|| ".'$'."this->registerHook('$val') === false";
 
-	$hookFuncBack .= "\n\t/**
+	$hook_func_front .= "\n\t/**
 	** BACK HOOK
 	*/
 	";
-	$isLeft = $isRight = '';
-	foreach($explodeBack as $val) {
-	$hookFuncBack .= "public function hook$val(".'$'."params)
+	$is_left = $is_right = '';
+	foreach ($explode_back as $val)
+	{
+	$hook_func_front .= "public function hook$val(".'$'."params)
 	{
 		// Check if the module is active
 		if (!".'$'."this->active)
@@ -238,35 +253,35 @@ if ($hookBack !== 'null') {
 	}\n\n\t";
 	}
 
-	// unset($explodeBack, $val);
-	$hookInstall .= ')';
+	// unset($explode_back, $val);
+	$hook_install .= ')';
 }
 
-		if (trim($hookFuncBack) === '') 
-			$hookFuncFront = rtrim($hookFuncFront);
+		if (trim($hook_func_front) === '')
+			$hook_func_front = rtrim($hook_func_front);
 
-		$hookFuncBack = trim($hookFuncBack);
+		$hook_func_front = trim($hook_func_front);
 
-		if ($hookBack === 'null' && $hookFront === 'null')
-			$hookInstall = ')';
+		if ($hook_back === 'null' && $hook_front === 'null')
+			$hook_install = ')';
 
 		// Extends Modules
 		$extends = '';
-		if (strpos($moduleTab, 'migration') !== false)
+		if (strpos($module_tab, 'migration') !== false)
 			$extends = 'Import';
-		elseif (strpos($moduleTab, 'payments') !== false)
+		elseif (strpos($module_tab, 'payments') !== false)
 			$extends = 'Payment';
-		elseif (strpos($moduleTab, 'billing') !== false)
+		elseif (strpos($module_tab, 'billing') !== false)
 			$extends = 'TaxManager';
-		elseif (strpos($moduleTab, 'shipping') !== false)
+		elseif (strpos($module_tab, 'shipping') !== false)
 			$extends = 'Carrier';
-		elseif (strpos($moduleTab, 'quick') !== false)
+		elseif (strpos($module_tab, 'quick') !== false)
 			$extends = 'StockManager';
 
-		$tabsFuncInstall = $tabsFuncUninstall = $tabsInstall = $tabsUninstall ='';
-		if ($moduleController === 1) {
-
-			$tabsFuncInstall = "\n\t/**
+		$tabs_func_install = $tabs_func_uninstall = $tabs_install = $tabs_uninstall = '';
+		if ($module_controller === 1)
+		{
+			$tabs_func_install = "\n\t/**
 			 * Install Tab
 			 * @return boolean
 			 */
@@ -274,23 +289,23 @@ if ($hookBack !== 'null') {
 			{
 				".'$'."tab = new Tab();
 				".'$'."tab->active = 1;
-				".'$'."tab->class_name = 'Admin$moduleNameCamel';
+				".'$'."tab->class_name = 'Admin$module_name_camel';
 				".'$'."tab->name = array();
 				foreach (Language::getLanguages(true) as ".'$'."lang)
 					".'$'."tab->name[".'$'."lang['id_lang']] = 'test';
 				unset(".'$'."lang);
-				".'$'."tab->id_parent = (int)Tab::getIdFromClassName('$moduleTabController');
+				".'$'."tab->id_parent = (int)Tab::getIdFromClassName('$module_controller');
 				".'$'."tab->module = ".'$'."this->name;
 				return ".'$'."tab->add();
 			}\n";
 
-			$tabsFuncUninstall ="\n\t/**
+			$tabs_func_uninstall = "\n\t/**
 			 * Uninstall Tab
 			 * @return boolean
 			 */
 			private function uninstallTab()
 			{
-				".'$'."id_tab = (int)Tab::getIdFromClassName('Admin$moduleNameCamel');
+				".'$'."id_tab = (int)Tab::getIdFromClassName('Admin$module_name_camel');
 				if (".'$'."id_tab)
 				{
 					".'$'."tab = new Tab(".'$'."id_tab);
@@ -300,19 +315,18 @@ if ($hookBack !== 'null') {
 					return false;
 			}\n";
 
-			$tabsInstall = "\n\t\t\t|| ".'$'."this->installTab() === false";
-			$tabsUninstall = "\n\t\t\t|| ".'$'."this->uninstallTab() === false";
+			$tabs_install = "\n\t\t\t|| ".'$'."this->installTab() === false";
+			$tabs_uninstall = "\n\t\t\t|| ".'$'."this->uninstallTab() === false";
 		}
 
-
-		$sqlConstant = $sqlPath = $sqlFuncInstall = $sqlFuncUninstall = $sqlInstall = $sqlUninstall = '';
-		if ($moduleSQL === 1)
+		$sql_constant = $sql_path = $sql_func_install = $sql_func_uninstall = $sql_install = $sql_uninstall = '';
+		if ($module_sql === 1)
 		{
-			$sqlConstant = "\t/* SQL files */\n\tconst INSTALL_SQL_FILE = 'install.sql';\n\n\tconst UNINSTALL_SQL_FILE = 'uninstall.sql';\n";
+			$sql_constant = "\t/* SQL files */\n\tconst INSTALL_SQL_FILE = 'install.sql';\n\n\tconst UNINSTALL_SQL_FILE = 'uninstall.sql';\n";
 
-			$sqlPath = "\n\t\t".'$'."this->sql_path = dirname(__FILE__).'/sql/';";
+			$sql_path = "\n\t\t".'$'."this->sql_path = dirname(__FILE__).'/sql/';";
 
-	$sqlFuncInstall = "\n\t/**
+	$sql_func_install = "\n\t/**
 	 * Install SQL
 	 * @return boolean
 	 */
@@ -341,7 +355,7 @@ if ($hookBack !== 'null') {
 		return true;
 	}\n";
 
-	$sqlFuncUninstall = "\n\t/**
+	$sql_func_uninstall = "\n\t/**
 	 * Uninstall SQL
 	 * @return boolean
 	 */
@@ -370,11 +384,11 @@ if ($hookBack !== 'null') {
 		return true;
 	}\n";
 
-			$sqlInstall = "\n\t\t\t|| ".'$'."this->installSQL() === false";
-			$sqlUninstall = "\n\t\t\t|| ".'$'."this->uninstallSQL() === false";
+			$sql_install = "\n\t\t\t|| ".'$'."this->installSQL() === false";
+			$sql_uninstall = "\n\t\t\t|| ".'$'."this->uninstallSQL() === false";
 		}
 
-$licenseTPL = "{*
+$license_tpl = "{*
 * 2007-".date('Y')." PrestaShop
 *
 * NOTICE OF LICENSE
@@ -399,7 +413,7 @@ $licenseTPL = "{*
 *  International Registered Trademark & Property of PrestaShop SA
 *}";
 
-$licenseFile = "/*
+$license_file = "/*
 * 2007-".date('Y')." PrestaShop
 *
 * NOTICE OF LICENSE
@@ -425,53 +439,53 @@ $licenseFile = "/*
 */";
 
 $mod = ("<?php
-$licenseFile
+$license_file
 
 if (defined('_PS_VERSION_') === false)
 	exit;
 
-class $moduleNameCamel extends ".$extends."Module
+class $module_name_camel extends ".$extends."Module
 {
 	/**
 	 * @var string Admin Module template path 
-	 * (eg. '/home/prestashop/modules/modulename/views/templates/admin/')
+	 * (eg. '/home/prestashop/modules/module_name/views/templates/admin/')
 	 */
 	protected ".'$'."admin_tpl_path = null;
 
 	/**
 	 * @var string Admin Module template path 
-	 * (eg. '/home/prestashop/modules/modulename/views/templates/hook/')
+	 * (eg. '/home/prestashop/modules/module_name/views/templates/hook/')
 	 */
 	protected ".'$'."hooks_tpl_path = null;
 
-	/** @var string Module js path (eg. '/shop/modules/modulename/js/') */
+	/** @var string Module js path (eg. '/shop/modules/module_name/js/') */
 	protected ".'$'."js_path = null;
 
-	/** @var string Module css path (eg. '/shop/modules/modulename/css/') */
+	/** @var string Module css path (eg. '/shop/modules/module_name/css/') */
 	protected ".'$'."css_path = null;
 
 	/** @var protected array cache filled with lang informations */
 	protected static ".'$'."lang_cache;
 
-$sqlConstant
+$sql_constant
 	public function __construct()
 	{
-		".'$'."this->name = '$moduleName';
-		".'$'."this->tab = '$moduleTab';
-		".'$'."this->version = '$moduleVersion';
-		".'$'."this->author = '$moduleAuthor';
-		".'$'."this->need_instance = '$moduleInstance';
+		".'$'."this->name = '$module_name';
+		".'$'."this->tab = '$module_tab';
+		".'$'."this->version = '$module_version';
+		".'$'."this->author = '$module_author';
+		".'$'."this->need_instance = '$module_instance';
 
 		".'$'."this->bootstrap = true;
 		".'$'."this->secure_key = Tools::encrypt(".'$'."this->name);
 
 		parent::__construct();
 
-		".'$'."this->displayName = ".'$'."this->l('$moduleDisplay');
-		".'$'."this->description = ".'$'."this->l('$moduleDesc');$uninstall
+		".'$'."this->displayName = ".'$'."this->l('$module_display');
+		".'$'."this->description = ".'$'."this->l('$module_desc');$uninstall
 
 		".'$'."this->js_path = ".'$'."this->_path.'js/';
-		".'$'."this->css_path = ".'$'."this->_path.'css/';$sqlPath
+		".'$'."this->css_path = ".'$'."this->_path.'css/';$sql_path
 		".'$'."this->admin_tpl_path = ".'$'."this->local_path.'views/templates/admin/';
 		".'$'."this->hooks_tpl_path = ".'$'."this->local_path.'views/templates/hook/';
 
@@ -504,35 +518,35 @@ $sqlConstant
 			}
 		}
 	}
-$sqlFuncInstall$sqlFuncUninstall$tabsFuncInstall$tabsFuncUninstall
+$sql_func_install$sql_func_uninstall$tabs_func_install$tabs_func_uninstall
 	/**
-	 * Insert module into datable
-	 * @return boolean result
-	 */
+	* Insert module into datable
+	* @return boolean result
+	*/
 	public function install()
 	{
 		if (Shop::isFeatureActive())
 			Shop::setContext(Shop::CONTEXT_ALL);
 
-		if (parent::install() === false$sqlInstall$tabsInstall$hookInstall
+		if (parent::install() === false$sql_install$tabs_install$hook_install
 			return false;
 		return true;
 	}
 
 	/**
-	 * Delete module from datable 
-	 * @return boolean result 
-	 */
+	* Delete module from datable 
+	* @return boolean result 
+	*/
 	public function uninstall()
 	{
-		if (parent::uninstall() === false$sqlUninstall$tabsUninstall)
+		if (parent::uninstall() === false$sql_uninstall$tabs_uninstall)
 			return false;
 		return true;
 	}
 
 	/**
-	 * Loads asset resources
-	 */
+	* Loads asset resources
+	*/
 	public function loadAsset()
 	{
 		".'$'."css_compatibility = ".'$'."js_compatibility = array();
@@ -573,8 +587,8 @@ $sqlFuncInstall$sqlFuncUninstall$tabsFuncInstall$tabsFuncUninstall
 	}
 
 	/**
-	 * Show the configuration module
-	 */
+	* Show the configuration module
+	*/
 	public function getContent()
 	{
 		// We load asset
@@ -607,114 +621,117 @@ $sqlFuncInstall$sqlFuncUninstall$tabsFuncInstall$tabsFuncUninstall
 
 		return ".'$'."this->display(__FILE__, 'views/templates/admin/configuration.tpl');
 	}
-$hookFuncFront$hookFuncBack
+$hook_func_front$hook_func_front
 }");
 
-		$structure = $moduleDir.'views/';
-		if (file_exists($moduleDir)) {
-			Generator::deleteRecursive($moduleDir);
-		}
+		$structure = $module_dir.'views/';
+		if (file_exists($module_dir))
+			Generator::deleteRecursive($module_dir);
 
-		if (!mkdir($structure, 0, true)) {
+		if (!mkdir($structure, 0, true))
 			die('Echec lors de la création des répertoires...');
-		}
 
-		if ($moduleController === 1) {
-			mkdir($moduleDir.'controllers');
-			if (!empty($moduleTabController)) {
-				mkdir($moduleDir.'controllers/admin');
-				Generator::copyRecursive($this->source_path.'index.php', $moduleDir.'controllers/admin/index.php');
+		if ($module_controller === 1)
+		{
+			mkdir($module_dir.'controllers');
+			if (!empty($module_controller))
+			{
+				mkdir($module_dir.'controllers/admin');
+				Generator::copyRecursive($this->source_path.'index.php', $module_dir.'controllers/admin/index.php');
 
 				$controller = ("<?php
-				$licenseFile
+				$license_file
 
-				class Admin".$moduleNameCamel."Controller extends ModuleAdminController
+				class Admin".$module_name_camel."Controller extends ModuleAdminController
 				{
 
 				}");
-				file_put_contents($moduleDir.'controllers/admin/Admin'.$moduleNameCamel.'Controller.php', $controller);
+				file_put_contents($module_dir.'controllers/admin/Admin'.$module_name_camel.'Controller.php', $controller);
 			}
-			Generator::copyRecursive($this->source_path.'index.php', $moduleDir.'controllers/index.php');
+			Generator::copyRecursive($this->source_path.'index.php', $module_dir.'controllers/index.php');
 
-			// if (!empty($moduleFrontController)) {
-			// 	mkdir($moduleDir.'controllers/front');
-			// 	Generator::copyRecursive($this->source_path.'index.php', $moduleDir.'controllers/front/index.php');
+			// if (!empty($moduleFrontController))
+			// {
+			// 	mkdir($module_dir.'controllers/front');
+			// 	Generator::copyRecursive($this->source_path.'index.php', $module_dir.'controllers/front/index.php');
 			// }
 		}
 
 		// Create module file
-		file_put_contents($moduleDir.$moduleName.'.php', ($mod));
+		file_put_contents($module_dir.$module_name.'.php', ($mod));
 
 		// Copy file
-		Generator::copyRecursive($this->source_path, $moduleDir);
+		Generator::copyRecursive($this->source_path, $module_dir);
 
 		// Move uploaded logo
-		if (file_exists($this->tmp_path.'logo.png')) {
-			if (copy($this->tmp_path.'logo.png', $moduleDir.'logo.png')) {
-				// unlink($this->tmp_path.'logo.png');
-			}
-		}
-		if (file_exists($this->tmp_path.'logo.gif')) {
-			if (copy($this->tmp_path.'logo.gif', $moduleDir.'logo.gif')) {
-				// unlink($this->tmp_path.'logo.gif');
-			}
-		}
+		if (file_exists($this->tmp_path.'logo.png'))
+			copy($this->tmp_path.'logo.png', $module_dir.'logo.png');
+
+		if (file_exists($this->tmp_path.'logo.gif'))
+			copy($this->tmp_path.'logo.gif', $module_dir.'logo.gif');
 
 		// Replacement of some variables
 		$conf = array(
-			'[license]' => $licenseTPL,
+			'[license]' => $license_tpl,
 			'[form]' => $form,
-			'[module]' => $moduleName,
-			'[text]' => $moduleDisplay
+			'[module]' => $module_name,
+			'[text]' => $module_display
 		);
-		Generator::replaceVar($conf, $templateDir.'admin/configuration.tpl');
-		Generator::replaceVar($conf, $templateDir.'admin/addons.tpl');
-		Generator::replaceVar($conf, $templateDir.'admin/header.tpl');
-		Generator::replaceVar($conf, $templateDir.'admin/translations.tpl');
+
+		Generator::replaceVar($conf, $template_dir.'admin/configuration.tpl');
+		Generator::replaceVar($conf, $template_dir.'admin/addons.tpl');
+		Generator::replaceVar($conf, $template_dir.'admin/header.tpl');
+		Generator::replaceVar($conf, $template_dir.'admin/translations.tpl');
 
 		// Rename css & js
-		rename($moduleDir.'css/module.css', $moduleDir.'css/'.$moduleName.'.css');
-		rename($moduleDir.'js/module.js', $moduleDir.'js/'.$moduleName.'.js');
+		rename($module_dir.'css/module.css', $module_dir.'css/'.$module_name.'.css');
+		rename($module_dir.'js/module.js', $module_dir.'js/'.$module_name.'.js');
 
 		// Write license to JS
-		$file = $moduleDir.'js/'.$moduleName.'.js';
-		$current = file_get_contents($file);
-		$current = $licenseFile."\n\n".$current;
+		$file = $module_dir.'js/'.$module_name.'.js';
+		$current = Tools::file_get_contents($file);
+		$current = $license_file."\n\n".$current;
 		file_put_contents($file, $current);
 
-		if ($moduleSQL === 1) {
-			$structure = $moduleDir.'sql/';
-			if (!mkdir($structure, 0, true)) {
+		if ($module_sql === 1)
+		{
+			$structure = $module_dir.'sql/';
+			if (!mkdir($structure, 0, true))
 				die('Echec lors de la création des répertoires...');
-			}
-			Generator::copyRecursive($this->source_path.'index.php',$structure.'index.php');
-			file_put_contents($sqlDir.'/install.sql', $moduleSQLInstall);
-			file_put_contents($sqlDir.'/uninstall.sql', $moduleSQLUninstall);
+
+			Generator::copyRecursive($this->source_path.'index.php', $structure.'index.php');
+			file_put_contents($sql_dir.'/install.sql', $module_sql_install);
+			file_put_contents($sql_dir.'/uninstall.sql', $module_sql_uninstall);
 		}
 
 		// Create tpl file for hook
-		if (!empty($explodeFront)) {
-			if (!mkdir($hookDir, 0, true)) {
-				die('Echec lors de la création des répertoires...');
-			}
-			$haveLeft = false;
-			foreach($explodeFront as $val) {
+		if (!empty($explode_front))
+		{
+			if (!mkdir($hook_dir, 0, true))
+				die('Echec lors de la création des répertoires hook...');
+
+			Generator::copyRecursive($this->source_path.'index.php', $hook_dir.'index.php');
+
+			$have_left = false;
+			foreach ($explode_front as $val)
+			{
 				if ($val === 'displayHeader') {}
 				elseif (strpos($val, 'action') !== false) {}
-				else {
-					if ($val === 'displayLeftColumn') {
-						$haveLeft = true;
-						file_put_contents($hookDir.$moduleName.$val.'.tpl', $licenseTPL);
+				else
+				{
+					if ($val === 'displayLeftColumn')
+					{
+						$have_left = true;
+						file_put_contents($hook_dir.$module_name.$val.'.tpl', $license_tpl);
 					}
-					elseif ($val === 'displayRightColumn') {
-						if ($haveLeft === false) {
-							file_put_contents($hookDir.$moduleName.$val.'.tpl', $licenseTPL);
-						}
-						$haveLeft = false;
+					elseif ($val === 'displayRightColumn')
+					{
+						if ($have_left === false)
+							file_put_contents($hook_dir.$module_name.$val.'.tpl', $license_tpl);
+						$have_left = false;
 					}
-					else {
-						file_put_contents($hookDir.$moduleName.$val.'.tpl', $licenseTPL);
-					}
+					else
+						file_put_contents($hook_dir.$module_name.$val.'.tpl', $license_tpl);
 				}
 			}
 			unset($val);
