@@ -23,31 +23,37 @@ var Main = function () {
 	};
 	// function to custom select
 	var runCustomElement = function () {
-		// Hide ugly multishop select
-		$('.multishop_toolbar').addClass("panel panel-default");
-		$('.shopList').removeClass("chzn-done").removeAttr("id").css("display", "block").next().remove();
-		cloneMulti = $(".multishop_toolbar").clone(true, true);
-		$(".multishop_toolbar").first().remove();
-		cloneMulti.find('.shopList').addClass('selectpicker show-menu-arrow').attr('data-live-search', 'true');
-		cloneMulti.insertBefore("#modulecontent");
+		// Hide ugly toolbar
+		$('table[class="table"]').each(function(){
+			$(this).hide();
+			$(this).next('div.clear').hide();
+		});
 
-		cloneActiveShop = $.trim($('table[class="table"] tr:nth-child(2) th').first().html());
-		$(cloneActiveShop).insertAfter("#tab_translation");
+		// Hide ugly multishop select
+		if (typeof(_PS_VERSION_) !== 'undefined') {
+			var version = _PS_VERSION_.substr(0,3);
+			if(version === '1.5') {
+				$('.multishop_toolbar').addClass("panel panel-default");
+				$('.shopList').removeClass("chzn-done").removeAttr("id").css("display", "block").next().remove();
+				cloneMulti = $(".multishop_toolbar").clone(true, true);
+				$(".multishop_toolbar").first().remove();
+				cloneMulti.find('.shopList').addClass('selectpicker show-menu-arrow').attr('data-live-search', 'true');
+				cloneMulti.insertBefore("#modulecontent");
+				// Copy checkbox for multishop
+				cloneActiveShop = j.trim($('table[class="table"] tr:nth-child(2) th').first().html());
+				$(cloneActiveShop).insertAfter("#tab_translation");
+			}
+		}
 
 		// Custom Select
 		$('.selectpicker').selectpicker();
 
-		// Custom Radio
-		$("div.btn-group[data-toggle='buttons-radio'] button").click(function() {
-			$(this).parent().find('button').removeClass('active');
-			$(this).addClass('active');
-			$(this).parent().parent().find('input').first().val($(this).val());
-		});
-
-		// Hide module toolbar
-		$('table[class="table"]').each(function(){
-			$(this).hide();
-			$(this).next('div.clear').hide();
+		// Fix bug form builder + bootstrap select
+		$('.selectpicker').each(function(){
+			var select = $(this);
+			select.on('click', function() {
+				$(this).parents('.bootstrap-select').toggleClass('open');
+			});
 		});
 
 		// Custom Textarea
@@ -58,7 +64,7 @@ var Main = function () {
 		init: function () {
 			runPanelToggle();
 			runCustomElement();
-		};
+		}
 	};
 }();
 
