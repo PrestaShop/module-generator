@@ -143,7 +143,7 @@ class AdminModuleGeneratorController extends ModuleAdminController
 		$hook_tpl = 'views/templates/hook/';
 
 		$module_controller = (int)$output['back_controller'];
-		$module_controller = strip_tags($output['tabs_controller_back']);
+		$module_tab_controller = ($output['tabs_controller_back'] === 'null') ? '-1' : strip_tags($output['tabs_controller_back']);
 
 		$module_sql = (int)$output['need_sql_install'];
 		$module_sql_install = $output['sql_install'];
@@ -281,39 +281,44 @@ if ($hook_back !== 'null')
 		$tabs_func_install = $tabs_func_uninstall = $tabs_install = $tabs_uninstall = '';
 		if ($module_controller === 1)
 		{
-			$tabs_func_install = "\n\t/**
-			 * Install Tab
-			 * @return boolean
-			 */
-			private function installTab()
-			{
-				".'$'."tab = new Tab();
-				".'$'."tab->active = 1;
-				".'$'."tab->class_name = 'Admin$module_name_camel';
-				".'$'."tab->name = array();
-				foreach (Language::getLanguages(true) as ".'$'."lang)
-					".'$'."tab->name[".'$'."lang['id_lang']] = 'test';
-				unset(".'$'."lang);
-				".'$'."tab->id_parent = (int)Tab::getIdFromClassName('$module_controller');
-				".'$'."tab->module = ".'$'."this->name;
-				return ".'$'."tab->add();
-			}\n";
+			if ($module_tab_controller === '-1')
+				$parent_tab = '-1';
+			else
+				$parent_tab = "(int)Tab::getIdFromClassName('$module_tab_controller')";
 
-			$tabs_func_uninstall = "\n\t/**
-			 * Uninstall Tab
-			 * @return boolean
-			 */
-			private function uninstallTab()
-			{
-				".'$'."id_tab = (int)Tab::getIdFromClassName('Admin$module_name_camel');
-				if (".'$'."id_tab)
-				{
-					".'$'."tab = new Tab(".'$'."id_tab);
-					return ".'$'."tab->delete();
-				}
-				else
-					return false;
-			}\n";
+	$tabs_func_install = "\n\t/**
+	* Install Tab
+	* @return boolean
+	*/
+	private function installTab()
+	{
+		".'$'."tab = new Tab();
+		".'$'."tab->active = 1;
+		".'$'."tab->class_name = 'Admin$module_name_camel';
+		".'$'."tab->name = array();
+		foreach (Language::getLanguages(true) as ".'$'."lang)
+			".'$'."tab->name[".'$'."lang['id_lang']] = 'test';
+		unset(".'$'."lang);
+		".'$'."tab->id_parent = $parent_tab;
+		".'$'."tab->module = ".'$'."this->name;
+		return ".'$'."tab->add();
+	}\n";
+
+	$tabs_func_uninstall = "\n\t/**
+	* Uninstall Tab
+	* @return boolean
+	*/
+	private function uninstallTab()
+	{
+		".'$'."id_tab = (int)Tab::getIdFromClassName('Admin$module_name_camel');
+		if (".'$'."id_tab)
+		{
+			".'$'."tab = new Tab(".'$'."id_tab);
+			return ".'$'."tab->delete();
+		}
+		else
+			return false;
+	}\n";
 
 			$tabs_install = "\n\t\t\t|| ".'$'."this->installTab() === false";
 			$tabs_uninstall = "\n\t\t\t|| ".'$'."this->uninstallTab() === false";
@@ -327,9 +332,9 @@ if ($hook_back !== 'null')
 			$sql_path = "\n\t\t".'$'."this->sql_path = dirname(__FILE__).'/sql/';";
 
 	$sql_func_install = "\n\t/**
-	 * Install SQL
-	 * @return boolean
-	 */
+	* Install SQL
+	* @return boolean
+	*/
 	private function installSQL()
 	{
 		// Create database tables from install.sql
@@ -356,9 +361,9 @@ if ($hook_back !== 'null')
 	}\n";
 
 	$sql_func_uninstall = "\n\t/**
-	 * Uninstall SQL
-	 * @return boolean
-	 */
+	* Uninstall SQL
+	* @return boolean
+	*/
 	private function uninstallSQL()
 	{
 		// Create database tables from uninstall.sql
@@ -447,15 +452,15 @@ if (defined('_PS_VERSION_') === false)
 class $module_name_camel extends ".$extends."Module
 {
 	/**
-	 * @var string Admin Module template path 
-	 * (eg. '/home/prestashop/modules/module_name/views/templates/admin/')
-	 */
+	* @var string Admin Module template path 
+	* (eg. '/home/prestashop/modules/module_name/views/templates/admin/')
+	*/
 	protected ".'$'."admin_tpl_path = null;
 
 	/**
-	 * @var string Admin Module template path 
-	 * (eg. '/home/prestashop/modules/module_name/views/templates/hook/')
-	 */
+	* @var string Admin Module template path 
+	* (eg. '/home/prestashop/modules/module_name/views/templates/hook/')
+	*/
 	protected ".'$'."hooks_tpl_path = null;
 
 	/** @var string Module js path (eg. '/shop/modules/module_name/js/') */
@@ -494,9 +499,9 @@ $sql_constant
 	}
 
 	/**
-	 * Get Language
-	 * @return array Lang
-	 */
+	* Get Language
+	* @return array Lang
+	*/
 	private function getLang()
 	{
 		if (self::".'$'."lang_cache == null && !is_array(self::".'$'."lang_cache))
@@ -634,7 +639,7 @@ $hook_func_front$hook_func_front
 		if ($module_controller === 1)
 		{
 			mkdir($module_dir.'controllers');
-			if (!empty($module_controller))
+			if (!empty($module_tab_controller))
 			{
 				mkdir($module_dir.'controllers/admin');
 				Generator::copyRecursive($this->source_path.'index.php', $module_dir.'controllers/admin/index.php');

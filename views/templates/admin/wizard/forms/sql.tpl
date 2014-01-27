@@ -41,12 +41,12 @@
 		</span>
 		<div class="switch_display hide">
 			<div class="clearfix form-group"></div>
-			<textarea placeholder="install SQL" id="form-field-8" name="sql_install" class="form-control textarea-animated">CREATE TABLE `PREFIXmodulename` (
+			<textarea placeholder="install SQL" id="sql_install" name="sql_install" class="form-control textarea-animated">CREATE TABLE `PREFIXmodulename` (
 
 ) ENGINE=ENGINE_DEFAULT DEFAULT CHARSET=utf8;</textarea>
 			<span class="help-block"><i class="icon-info-circle"></i> {l s='Use PREFIX & ENGINE_DEFAULT' mod='modulegenerator'}</span>
 			<div class="clearfix form-group"></div>
-			<textarea placeholder="uninstall SQL" id="form-field-9" name="sql_uninstall" class="form-control textarea-animated">DROP TABLE `PREFIXmodulename`;</textarea>
+			<textarea placeholder="uninstall SQL" id="sql_uninstall" name="sql_uninstall" class="form-control textarea-animated">DROP TABLE `PREFIXmodulename`;</textarea>
 			<span class="help-block"><i class="icon-info-circle"></i> {l s='Use PREFIX' mod='modulegenerator'}</span>
 		</div>
 	</div>

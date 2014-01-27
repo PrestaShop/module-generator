@@ -86,6 +86,33 @@ var Main = function () {
 			}
 		}
 
+		// Custome SQL
+		j("#modulename").one('focus', function () {
+			first = 0;
+			previous = this.value;
+		}).change(function() {
+			var prefix = 'PREFIXmodulename';
+			var install = j('#sql_install').val();
+			var uninstall = j('#sql_uninstall').val();
+
+			if (first === 0) {
+				var install = install.replace(prefix, 'PREFIXmodule_'+this.value);
+				var uninstall = uninstall.replace(prefix, 'PREFIXmodule_'+this.value);
+
+				j('#sql_install').val(install);
+				j('#sql_uninstall').val(uninstall);
+			} else {
+				var install = install.replace(previous, this.value);
+				var uninstall = uninstall.replace(previous, this.value);
+
+				j('#sql_install').val(install);
+				j('#sql_uninstall').val(uninstall);
+			}
+
+			previous = this.value;
+			first++;
+		});
+
 		// Custom Select
 		j('.selectpicker').selectpicker();
 

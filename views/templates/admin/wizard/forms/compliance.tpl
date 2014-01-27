@@ -30,6 +30,7 @@
 	<div class="col-sm-9">
 		<select class="selectpicker show-menu-arrow  show-tick span2">
 			<optgroup label="1.6.0">
+				<option value="1.6.0.3">1.6.0.3</option>
 				<option value="1.6.0.2">1.6.0.2</option>
 				<option value="1.6.0.1">1.6.0.1</option>
 			</optgroup>
