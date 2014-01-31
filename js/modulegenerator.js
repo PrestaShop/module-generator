@@ -39,6 +39,7 @@
 
 // Main Function
 var j = jQuery.noConflict();
+var first = 0;
 
 var Main = function () {
 	// function for debug
@@ -62,8 +63,29 @@ var Main = function () {
 			return false;
 		});
 	};
+
+	var setSQL = function () {
+		var prefix = 'PREFIXmodulename';
+		var install = j('#sql_install').val();
+		var uninstall = j('#sql_uninstall').val();
+		if (first === 0) {
+			var install = install.replace(prefix, 'PREFIXmodule_'+this.value);
+			var uninstall = uninstall.replace(prefix, 'PREFIXmodule_'+this.value);
+			j('#sql_install').val(install);
+			j('#sql_uninstall').val(uninstall);
+		} else {
+			var install = install.replace(previous, this.value);
+			var uninstall = uninstall.replace(previous, this.value);
+			j('#sql_install').val(install);
+			j('#sql_uninstall').val(uninstall);
+		}
+		previous = this.value;
+		first++;
+	};
+
 	// function to custom select
 	var runCustomElement = function () {
+
 		// Hide ugly toolbar
 		j('table[class="table"]').each(function(){
 			j(this).hide();
@@ -87,31 +109,7 @@ var Main = function () {
 		}
 
 		// Custome SQL
-		j("#modulename").one('focus', function () {
-			first = 0;
-			previous = this.value;
-		}).change(function() {
-			var prefix = 'PREFIXmodulename';
-			var install = j('#sql_install').val();
-			var uninstall = j('#sql_uninstall').val();
-
-			if (first === 0) {
-				var install = install.replace(prefix, 'PREFIXmodule_'+this.value);
-				var uninstall = uninstall.replace(prefix, 'PREFIXmodule_'+this.value);
-
-				j('#sql_install').val(install);
-				j('#sql_uninstall').val(uninstall);
-			} else {
-				var install = install.replace(previous, this.value);
-				var uninstall = uninstall.replace(previous, this.value);
-
-				j('#sql_install').val(install);
-				j('#sql_uninstall').val(uninstall);
-			}
-
-			previous = this.value;
-			first++;
-		});
+		j('#modulename').keyup(j.debounce( 250, setSQL ));
 
 		// Custom Select
 		j('.selectpicker').selectpicker();
@@ -206,13 +204,11 @@ var Main = function () {
 
 	var runUpload = function () {
 		var ul = j('#upload ul');
-
 		j('#drop a').click(function(){
 			// Simulate a click on the file input button
 			// to show the file browser dialog
 			j(this).parent().find('input').click();
 		});
-
 		// Initialize the jQuery File Upload plugin
 		j('#upload').fileupload({
 			// This element will accept file drag/drop uploading
@@ -233,6 +229,8 @@ var Main = function () {
 			add: function (e, data) {
 				// Remove first li
 				ul.find('li').first().remove();
+				ul.fadeIn();
+
 				// Create template for li
 				var tpl = j('<li class="working">'+
 					'<p></p>'+
@@ -241,17 +239,15 @@ var Main = function () {
 				'</li>');
 				// Append the file name and file size
 				tpl.find('p').text(data.files[0].name).append('<i>' + formatFileSize(data.files[0].size) + '</i>');
-			
 				// Add the HTML to the UL element
 				data.context = tpl.appendTo(ul);
-
 				// Listen for clicks on the cancel icon
 				tpl.find('span').click(function(){
 					if(tpl.hasClass('working')){
 						jqXHR.abort();
 					}
 
-					if(j(this).hasClass('icon-check')){
+					if(j(this).hasClass('icon-times')){
 						loadModal(ul);
 					} else {
 						tpl.fadeOut(function(){
@@ -259,7 +255,6 @@ var Main = function () {
 						});
 					}
 				});
-
 				// Automatically upload the file once it is added to the queue
 				var jqXHR = data.submit();
 			},
@@ -272,13 +267,12 @@ var Main = function () {
 
 				if(progress == 100){
 					data.context.removeClass('working');
-					data.context.find('span').addClass('icon-check');
+					data.context.find('span').addClass('icon-times');
 				}
 			},
 			fail:function(e, data){
 				// Something has gone wrong!
 				data.context.addClass('error');
-				data.context.find('span').removeClass('icon-check').addClass('icon-times');
 				data.context.prepend('<div class="alert alert-danger">'+data.errorThrown+'</div>');
 			},
 			done:function(e, data){
@@ -331,10 +325,12 @@ var Main = function () {
 		j('.step-bar').css('width', valueNow + '%');
 	};
 	var initValidator = function () {
+		var e = $("#validFirstStep"),
+			n = $(".alert-danger", e);
 		j.validator.setDefaults({
 			debug: true,
 			errorElement: "span", // contain the error msg in a span tag
-			errorClass: 'help-block',
+			errorClass: 'help-block-2',
 			errorPlacement: function (error, element) { // render error placement for each input type
 				if (element.attr("type") == "radio" || element.attr("type") == "checkbox") { // for chosen elements, need to insert the error after the chosen container
 					error.insertAfter(j(element).closest('.form-group').children('div').children().last());
@@ -342,6 +338,9 @@ var Main = function () {
 					error.insertAfter(element);
 					// for other inputs, just perform default behavior
 				}
+			},
+			invalidHandler: function () {
+				n.removeClass('hide');
 			},
 			highlight: function (element) {
 				j(element).closest('.help-block').removeClass('valid');
@@ -368,13 +367,14 @@ var Main = function () {
 	var validateSteps = function (obj, context) {
 		var $firstForm = j("#validFirstStep");
 		var isStepValid = true;
+		var n = $(".alert-danger", $firstForm);
 
 		stepNumber = context.fromStep;
 		nextStep = context.toStep;
-
 		if (numberOfSteps !== nextStep) {
 			$firstForm.validate().focusInvalid();
 			if ($firstForm.valid()) {
+				n.addClass('hide');
 				animateBar(nextStep);
 				j("#next-step").removeClass('hide');
 				if (nextStep === 1) {
@@ -395,23 +395,19 @@ var Main = function () {
 
 	var validateAllSteps = function () {
 		var isStepValid = true;
-		// 
 		return isStepValid;
 	};
 
 	var checkStep = function () {
 		var $wizardContent = j('#wizard');
-
 		j("#next-step").unbind("click").on("click", function (e) {
 			e.preventDefault();
 			$wizardContent.smartWizard("goForward");
 		});
-
 		j("#back-step").unbind("click").on("click", function(e) {
 			e.preventDefault();
 			$wizardContent.smartWizard("goBackward");
 		});
-
 		j(".finish-step").unbind("click").on("click", function(e) {
 			e.preventDefault();
 			onFinishForm();
@@ -457,29 +453,3 @@ j(function() {
 	// Load functions
 	Main.init();
 });
-
-/*
-<form>
-	<div>
-	<input type="text" name="content[]" placeholder="content" />
-	<input type="button" class="add" value="Add" />
-	</div>
-</form>
-j('form').on('click', '.add', function () {
-	var row = j(this).closest('div'),
-		new_row = row.clone();
-	
-	row.find('input:text').addClass('accepted');
-	
-	row.find('.add')
-		.removeClass('add')
-		.addClass('remove')
-		.val('Remove');
-	
-	new_row.find('input:text').val('');
-	
-	row.after(new_row);
-}).on('click', '.remove', function () {
-	j(this).closest('div').remove();
-});
-*/

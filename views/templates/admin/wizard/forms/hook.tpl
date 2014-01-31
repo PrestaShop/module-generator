@@ -145,5 +145,6 @@
 				<option value="actionCarrierUpdate">actionCarrierUpdate</option>
 			</optgroup>
 		</select>
+		<span class="help-block"><i class="icon-info-circle"></i> {l s='Select multiple hooks for the front office and/or the back office' mod='modulegenerator'}</span>
 	</div>
 </div>

@@ -329,6 +329,7 @@ body {
 	line-height: 26px;
 	vertical-align: middle;
 }
+
 .switch label {
 	position: relative;
 	z-index: 2;
@@ -351,6 +352,7 @@ body {
 .bootstrap .prestashop-switch input:checked + label {
 	color: white;
 }
+
 .prestashop-switch {
 	min-width: 150px;
 	background-color: #eeeeee;

@@ -24,7 +24,7 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
-include_once(dirname(__FILE__).'/../../classes/Generator.php');
+include_once(dirname(__FILE__).'/../../classes/DataProcess.php');
 
 class AdminModuleGeneratorController extends ModuleAdminController
 {
@@ -67,12 +67,12 @@ class AdminModuleGeneratorController extends ModuleAdminController
 			}
 			if (move_uploaded_file($_FILES['upl']['tmp_name'], $this->tmp_path.$upload_name))
 			{
-				if (!Generator::resize($this->tmp_path.$upload_name, $this->tmp_path.'logo.png'))
+				if (!DataProcess::resize($this->tmp_path.$upload_name, $this->tmp_path.'logo.png'))
 				{
 					header("HTTP/1.0 500 An error occurred while copying image");
 					echo '{"status":"An error occurred while copying image: '.$upload_name.'"}';
 				}
-				elseif (!Generator::resize($this->tmp_path.$upload_name, $this->tmp_path.'logo.gif', 16, 16, 'gif'))
+				elseif (!DataProcess::resize($this->tmp_path.$upload_name, $this->tmp_path.'logo.gif', 16, 16, 'gif'))
 				{
 					header("HTTP/1.0 500 An error occurred while copying image");
 					echo '{"status":"An error occurred while copying image: '.$upload_name.'"}';
@@ -186,14 +186,14 @@ if ($hook_front !== 'null')
 	if ($val === 'displayLeftColumn')
 	{
 		$have_left = true;
-		$is_left = Generator::standardTPL($module_name, $hook_tpl, $val);
+		$is_left = DataProcess::standardTPL($module_name, $hook_tpl, $val);
 	}
 	elseif ($val === 'displayRightColumn')
 	{
 		if ($have_left === true)
 			$is_right = "return ".'$'."this->hookDisplayLeftColumn(".'$'."params);";
 		else
-			$is_right = Generator::standardTPL($module_name, $hook_tpl, $val);
+			$is_right = DataProcess::standardTPL($module_name, $hook_tpl, $val);
 		$have_left = false;
 	}
 	elseif ($val === 'displayHeader')
@@ -216,7 +216,7 @@ if ($hook_front !== 'null')
 	elseif (strpos($val, 'action') !== false)
 		$is_content = '';
 	else
-		$is_content = Generator::standardTPL($module_name, $hook_tpl, $val);
+		$is_content = DataProcess::standardTPL($module_name, $hook_tpl, $val);
 
 	$hook_func_front .= "public function hook$val(".'$'."params)
 	{
@@ -609,19 +609,21 @@ $sql_func_install$sql_func_uninstall$tabs_func_install$tabs_func_uninstall
 
 			".'$'."this->context->smarty->assign(array(
 				'lang_select' => self::".'$'."lang_cache,
-				'module_name' => ".'$'."this->name,
 				'module_active' => (bool)".'$'."this->active,
-				'module_trad' => 'index.php?tab=AdminTranslations'.".'$'."token_trad.'&type=modules&lang=',
-				'module_hook' => 'index.php?tab=AdminModulesPositions'.".'$'."token_pos.'&show_modules='.".'$'."this->id,
-				'module_back' => 'index.php?tab=AdminModules'.".'$'."token_mod.".'$'."tab.'&module_name='.".'$'."this->name,
-				'module_form' => 'index.php?tab=AdminModules&configure='.".'$'."this->name.".'$'."token_mod.".'$'."tab.'&module_name='.".'$'."this->name,
+				'module_trad' => 'index.php?controller=AdminTranslations'.".'$'."token_trad.'&type=modules&lang=',
+				'module_hook' => 'index.php?controller=AdminModulesPositions'.".'$'."token_pos.'&show_modules='.".'$'."this->id,
+				'module_back' => 'index.php?controller=AdminModules'.".'$'."token_mod.".'$'."tab.'&module_name='.".'$'."this->name,
+				'module_form' => 'index.php?controller=AdminModules&configure='.".'$'."this->name.".'$'."token_mod.".'$'."tab.'&module_name='.".'$'."this->name,
+				'module_reset' => 'index.php?controller=AdminModules'.".'$'."token_mod.'&module_name='.".'$'."this->name.'&reset'.".'$'."tab,
 			));
 			// Clean memory
 			unset(".'$'."tab, ".'$'."token_mod, ".'$'."token_pos, ".'$'."token_trad);
 		}
 
 		".'$'."this->context->smarty->assign(array(
-			'ps_version' => (bool) version_compare(_PS_VERSION_, '1.6', '>'),
+			'module_name' => ".'$'."this->name,
+			'module_display' => ".'$'."this->displayName,
+			'ps_version' => (bool)version_compare(_PS_VERSION_, '1.6', '>'),
 		));
 
 		return ".'$'."this->display(__FILE__, 'views/templates/admin/configuration.tpl');
@@ -631,9 +633,9 @@ $hook_func_front$hook_func_front
 
 		$structure = $module_dir.'views/';
 		if (file_exists($module_dir))
-			Generator::deleteRecursive($module_dir);
+			DataProcess::deleteRecursive($module_dir);
 
-		if (!mkdir($structure, 0, true))
+		if (!mkdir($structure, 0777, true))
 			die('Echec lors de la création des répertoires...');
 
 		if ($module_controller === 1)
@@ -642,7 +644,7 @@ $hook_func_front$hook_func_front
 			if (!empty($module_tab_controller))
 			{
 				mkdir($module_dir.'controllers/admin');
-				Generator::copyRecursive($this->source_path.'index.php', $module_dir.'controllers/admin/index.php');
+				DataProcess::copyRecursive($this->source_path.'index.php', $module_dir.'controllers/admin/index.php');
 
 				$controller = ("<?php
 				$license_file
@@ -653,12 +655,12 @@ $hook_func_front$hook_func_front
 				}");
 				file_put_contents($module_dir.'controllers/admin/Admin'.$module_name_camel.'Controller.php', $controller);
 			}
-			Generator::copyRecursive($this->source_path.'index.php', $module_dir.'controllers/index.php');
+			DataProcess::copyRecursive($this->source_path.'index.php', $module_dir.'controllers/index.php');
 
 			// if (!empty($moduleFrontController))
 			// {
 			// 	mkdir($module_dir.'controllers/front');
-			// 	Generator::copyRecursive($this->source_path.'index.php', $module_dir.'controllers/front/index.php');
+			// 	DataProcess::copyRecursive($this->source_path.'index.php', $module_dir.'controllers/front/index.php');
 			// }
 		}
 
@@ -666,7 +668,7 @@ $hook_func_front$hook_func_front
 		file_put_contents($module_dir.$module_name.'.php', ($mod));
 
 		// Copy file
-		Generator::copyRecursive($this->source_path, $module_dir);
+		DataProcess::copyRecursive($this->source_path, $module_dir);
 
 		// Move uploaded logo
 		if (file_exists($this->tmp_path.'logo.png'))
@@ -683,10 +685,10 @@ $hook_func_front$hook_func_front
 			'[text]' => $module_display
 		);
 
-		Generator::replaceVar($conf, $template_dir.'admin/configuration.tpl');
-		Generator::replaceVar($conf, $template_dir.'admin/addons.tpl');
-		Generator::replaceVar($conf, $template_dir.'admin/header.tpl');
-		Generator::replaceVar($conf, $template_dir.'admin/translations.tpl');
+		DataProcess::replaceVar($conf, $template_dir.'admin/configuration.tpl');
+		DataProcess::replaceVar($conf, $template_dir.'admin/addons.tpl');
+		DataProcess::replaceVar($conf, $template_dir.'admin/header.tpl');
+		DataProcess::replaceVar($conf, $template_dir.'admin/translations.tpl');
 
 		// Rename css & js
 		rename($module_dir.'css/module.css', $module_dir.'css/'.$module_name.'.css');
@@ -701,10 +703,10 @@ $hook_func_front$hook_func_front
 		if ($module_sql === 1)
 		{
 			$structure = $module_dir.'sql/';
-			if (!mkdir($structure, 0, true))
+			if (!mkdir($structure, 0777, true))
 				die('Echec lors de la création des répertoires...');
 
-			Generator::copyRecursive($this->source_path.'index.php', $structure.'index.php');
+			DataProcess::copyRecursive($this->source_path.'index.php', $structure.'index.php');
 			file_put_contents($sql_dir.'/install.sql', $module_sql_install);
 			file_put_contents($sql_dir.'/uninstall.sql', $module_sql_uninstall);
 		}
@@ -712,10 +714,10 @@ $hook_func_front$hook_func_front
 		// Create tpl file for hook
 		if (!empty($explode_front))
 		{
-			if (!mkdir($hook_dir, 0, true))
+			if (!mkdir($hook_dir, 0777, true))
 				die('Echec lors de la création des répertoires hook...');
 
-			Generator::copyRecursive($this->source_path.'index.php', $hook_dir.'index.php');
+			DataProcess::copyRecursive($this->source_path.'index.php', $hook_dir.'index.php');
 
 			$have_left = false;
 			foreach ($explode_front as $val)

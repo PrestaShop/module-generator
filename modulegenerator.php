@@ -76,9 +76,6 @@ class ModuleGenerator extends Module
 	*/
 	private function getTabs()
 	{
-		if ($this->hasCache())
-			self::$tabs_cache = $this->getCache();
-
 		if (self::$tabs_cache === null && !is_array(self::$tabs_cache) && !$this->hasCache())
 		{
 			self::$tabs_cache = array();
@@ -98,6 +95,9 @@ class ModuleGenerator extends Module
 				unset($row, $exprow, $result);
 			}
 		}
+
+		if ($this->hasCache())
+			self::$tabs_cache = $this->getCache();
 	}
 
 	/*
@@ -209,9 +209,10 @@ class ModuleGenerator extends Module
 			$this->js_path.'jquery.ui.widget.js',
 			$this->js_path.'jquery.iframe-transport.js',
 			$this->js_path.'jquery.fileupload.js',
+			$this->js_path.'jquery.smartWizard.js',
+			$this->js_path.'jquery.ba-throttle-debounce.min.js',
 			$this->js_path.'bootstrap-dialog.js',
 			$this->js_path.'bootstrap-select.min.js',
-			$this->js_path.'jquery.smartWizard.js',
 			$this->js_path.$this->name.'.js'
 		);
 		if (version_compare(_PS_VERSION_, '1.6', '<'))
@@ -246,12 +247,12 @@ class ModuleGenerator extends Module
 
 			$this->context->smarty->assign(array(
 				'lang_select' => self::$lang_cache,
-				'module_name' => $this->name,
 				'module_active' => (bool)$this->active,
-				'module_trad' => 'index.php?tab=AdminTranslations'.$token_trad.'&type=modules&lang=',
-				'module_hook' => 'index.php?tab=AdminModulesPositions'.$token_pos.'&show_modules='.$this->id,
-				'module_back' => 'index.php?tab=AdminModules'.$token_mod.$tab.'&module_name='.$this->name,
-				'module_form' => 'index.php?tab=AdminModules&configure='.$this->name.$token_mod.$tab.'&module_name='.$this->name,
+				'module_trad' => 'index.php?controller=AdminTranslations'.$token_trad.'&type=modules&lang=',
+				'module_hook' => 'index.php?controller=AdminModulesPositions'.$token_pos.'&show_modules='.$this->id,
+				'module_back' => 'index.php?controller=AdminModules'.$token_mod.$tab.'&module_name='.$this->name,
+				'module_form' => 'index.php?controller=AdminModules&configure='.$this->name.$token_mod.$tab.'&module_name='.$this->name,
+				'module_reset' => 'index.php?controller=AdminModules'.$token_mod.'&module_name='.$this->name.'&reset'.$tab,
 			));
 			// Clean memory
 			unset($tab, $token_mod, $token_pos, $token_trad);
@@ -259,6 +260,8 @@ class ModuleGenerator extends Module
 
 		$this->context->smarty->assign(array(
 			'tab_select' => self::$tabs_cache,
+			'module_name' => $this->name,
+			'module_display' => $this->displayName,
 			'ps_version' => (bool)version_compare(_PS_VERSION_, '1.6', '>'),
 		));
 

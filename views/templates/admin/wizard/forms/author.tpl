@@ -29,5 +29,6 @@
 	</label>
 	<div class="col-sm-9">
 		<input type="text" class="form-control required" value="PrestaShop" id="module_author" name="module_author" placeholder="{l s='Module Author' mod='modulegenerator'}">
+		<span class="help-block"><i class="icon-info-circle"></i> {l s='This is displayed as is in the PrestaShop modules list.' mod='modulegenerator'}</span>
 	</div>
 </div>

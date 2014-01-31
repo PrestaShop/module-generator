@@ -29,5 +29,6 @@
 	</label>
 	<div class="col-sm-9">
 		<textarea placeholder="{l s='Module Description' mod='modulegenerator'}" id="module_description" name="module_description" class="form-control textarea-animated required"></textarea>
+		<span class="help-block"><i class="icon-info-circle"></i> {l s='A description for the module, which will be displayed in the back-office\'s modules list.' mod='modulegenerator'}</span>
 	</div>
 </div>

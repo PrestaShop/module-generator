@@ -54,5 +54,6 @@
 			<option value="smart_shopping">Smart Shopping</option>
 			<option value="social_networks">Social Networks</option>
 		</select>
+		<span class="help-block"><i class="icon-info-circle"></i> {l s='The title for the section that shall contain this module in PrestaShop\'s back-office modules list.' mod='modulegenerator'}</span>
 	</div>
 </div>

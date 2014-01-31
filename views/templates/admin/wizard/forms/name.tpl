@@ -29,6 +29,6 @@
 	</label>
 	<div class="col-sm-9">
 		<input type="text" class="form-control required" value="" id="modulename" name="module_name" placeholder="{l s='Module Name' mod='modulegenerator'}">
-		<span class="help-block"><i class="icon-info-circle"></i> {l s='Technical name lowercase only.' mod='modulegenerator'}</span>
+		<span class="help-block"><i class="icon-info-circle"></i> {l s='This attributes serves as an internal identifier, without special characters or spaces, and keep it lower-case. In effect, the value MUST be the name of the module\'s folder.' mod='modulegenerator'}</span>
 	</div>
 </div>

@@ -104,5 +104,6 @@
 				<option value="1.5.0.0">1.5.0.0</option>
 			</optgroup>
 		</select>
+		<span class="help-block"><i class="icon-info-circle"></i> {l s='It clearly indicates which version of PrestaShop this module is compatible with.' mod='modulegenerator'}</span>
 	</div>
 </div>

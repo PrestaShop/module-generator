@@ -30,14 +30,14 @@
 		</label>
 		<div class="col-sm-9">
 			<div id="drop">
-				{l s='Drop Here' mod='modulegenerator'}
+				{l s='Drop here your logo' mod='modulegenerator'}
 				<a>{l s='Browse' mod='modulegenerator'}</a>
 				<input type="file" name="upl" />
 			</div>
 			<ul>
 			<!-- The file uploads will be shown here -->
 			</ul>
-			<span class="help-block"><i class="icon-info-circle"></i> PNG 32x32.</span>
+			<span class="help-block"><i class="icon-info-circle"></i> Your logo will be resized automatically 32x32 (png) and 16x16 (gif).</span>
 		</div>
 	</div>
 </form>

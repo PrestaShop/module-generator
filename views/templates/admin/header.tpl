@@ -62,7 +62,7 @@
 					</a>
 				</li>
 				<li>
-					<a id="desc-module-hook" class="toolbar_btn" href="{$module_form|escape:'htmlall':'UTF-8'}&amp;reset" title="{l s='Reset' mod='modulegenerator'}">
+					<a id="desc-module-hook" class="toolbar_btn" href="{$module_reset|escape:'htmlall':'UTF-8'}" title="{l s='Reset' mod='modulegenerator'}">
 						<i class="process-icon-reset"></i>
 						<div>{l s='Reset' mod='modulegenerator'}</div>
 					</a>

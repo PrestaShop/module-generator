@@ -9,11 +9,13 @@
 	position: relative;
 	width: 100%;
 }
+
 .swMain > ul li {
 	display: table-cell;
 	text-align: center;
 	width: 1%;
 }
+
 .swMain > ul li > a:before {
 	border-top: 4px solid #CED1D6;
 	content: "";
@@ -26,10 +28,12 @@
 	width: 100%;
 	z-index: 1;
 }
+
 .swMain > ul li:first-child > a:before {
 	left: 50%;
 	max-width: 51%;
 }
+
 .swMain > ul li:last-child > a:before {
 	max-width: 50%;
 	width: 50%;
@@ -37,6 +41,7 @@
 .swMain > ul li > a.selected:before, .swMain li > a.done:before {
 	border-color: #5293C4;
 }
+
 .swMain > ul .stepNumber {
 	background-color: #FFFFFF;
 	border: 5px solid #CED1D6;
@@ -54,12 +59,14 @@
 .swMain > ul li > a.selected .stepNumber {
 	border-color: #5293C4;
 }
+
 .swMain ul li > a.done .stepNumber {
 	border-color: #5293C4;
 	background-color: #5293C4;
 	color: #fff;
 	text-indent: -9999px;
 }
+
 .swMain ul li > a.done .stepNumber:before {
 	content: "\f00c";
 	display: inline;
@@ -71,6 +78,7 @@
 	margin-right: 7px;
 	text-indent: 0;
 }
+
 .swMain > ul li .stepDesc {
 	color: #949EA7;
 	display: block;
@@ -82,163 +90,37 @@
 	word-wrap: break-word;
 	z-index: 104;
 }
+
 .swMain > ul li > a.selected .stepDesc, .swMain li > a.done .stepDesc {
 	color: #2B3D53;
 }
+
 .swMain > ul li > a:hover {
 	text-decoration: none;
 }
+
 .swMain > ul li > a.disabled {
 	cursor: default;
 }
+
 .swMain .progress {
 	margin-bottom: 30px;
 }
+
 .swMain .stepContainer {
 	height: auto !important;
 }
+
 .swMain .loader {
 	display: none;
 }
+
 .swMain [class^="button"], .swMain [class*=" button"] {
 	display: none;
 }
-.swMain .close {
+
+.swMain .actionBar {
 	display: none;
-}
-
-/****************************************************************/
-/****************************************************************/
-/****************************************************************/
-a, a:focus, a:hover, a:active {
-	outline: 0 !important;
-}
-
-a.off:active, a.off.active {
-	color: #c42f2f;
-}
-
-a.on:active, a.on.active {
-	color: #4ec943;
-}
-
-a.off:focus, a.off:hover, a.off.active {
-	text-decoration: none;
-}
-
-a.on:focus, a.on:hover, a.on.active {
-	text-decoration: none;
-}
-
-div.btn-ctn {
-	float: left;
-	padding: 20px;
-	-moz-box-shadow: inset 0 1px 1px #b6bcc2;
-	-webkit-box-shadow: inset 0 1px 1px #b6bcc2;
-	box-shadow: inset 0 1px 1px #b6bcc2;
-	margin-bottom: 20px;
-	margin-right: 20px;
-	background-color: white;
-}
-
-a:active{
-	margin-top: 1px;
-	text-decoration: none;
-}
-
-a.tggl:active{
-	margin-top: 0px;
-}
-
-div.tggl-cnt {
-	width: 40px;
-	-moz-box-shadow: 0 0 12px #c5c4c4;
-	-webkit-box-shadow: 0 0 12px #c5c4c4;
-	box-shadow: 0 0 12px #c5c4c4;
-	border-radius: 5px;
-	height: 74px;
-	padding-bottom: 3px;
-}
-
-a.tggl {
-	padding: 0;
-	line-height: 100%;
-	display: block;
-	background-color: #f3f2ed;
-	color: #bcbaaf;
-	overflow: hidden;
-	width: 40px;
-	height: 36px;
-	text-shadow: 1px -1px 1px #f1f1f1;
-	margin: 0 auto;
-	text-align: center;
-	font-weight: bold;
-	font-size: 1em;
-}
-
-a.tggl.on{
-	border-bottom: 1px solid #ecedec;
-	-moz-box-shadow: inset 0 2px 0 #ffffff, 0 -7px 0 #f3f1ec, 0 -7px 2px #d3d0d0;
-	-webkit-box-shadow: inset 0 2px 0 #ffffff, 0 -7px 0 #f3f1ec, 0 -7px 2px #d3d0d0;
-	box-shadow: inset 0 2px 0 #ffffff, 0 -7px 0 #f3f1ec, 0 -7px 2px #d3d0d0;
-	background-color: #e8e6e1;
-	background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(218, 216, 209)), to(rgb(246, 245, 242)));
-	background-image: -webkit-linear-gradient(top, rgb(218, 216, 209), rgb(246, 245, 242));
-	background-image: -moz-linear-gradient(top, rgb(218, 216, 209), rgb(246, 245, 242));
-	background-image: -o-linear-gradient(top, rgb(218, 216, 209), rgb(246, 245, 242));
-	background-image: -ms-linear-gradient(top, rgb(218, 216, 209), rgb(246, 245, 242));
-	background-image: linear-gradient(top, rgb(218, 216, 209), rgb(246, 245, 242));
-	filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#dad8d1', EndColorStr='#f6f5f2');
-	text-align: center;
-	line-height: 36px;
-}
-
-a.tggl.on.active, a.tggl.on:active{
-	border-bottom: 1px solid #ecedec;
-	-moz-box-shadow: inset 0 2px 0 #ffffff, 0 -3px 0 #f3f1ec, 0 -2px 2px #d3d0d0;
-	-webkit-box-shadow: inset 0 2px 0 #ffffff, 0 -3px 0 #f3f1ec, 0 -2px 2px #d3d0d0;
-	box-shadow: inset 0 2px 0 #ffffff, 0 -3px 0 #f3f1ec, 0 -2px 2px #d3d0d0;
-	background-color: #f3f2ee;
-	background-image: -webkit-gradient(radial, 100% 100%,0,100% 100%,200, from(rgb(241, 239, 234)), to(rgb(246, 245, 242)));
-	background-image: -webkit-radial-gradient(100% 100%, rgb(246, 245, 242), rgb(241, 239, 234));
-	background-image: -moz-radial-gradient(100% 100%, rgb(246, 245, 242), rgb(241, 239, 234));
-	background-image: -o-radial-gradient(100% 100%, rgb(246, 245, 242), rgb(241, 239, 234));
-	background-image: -ms-radial-gradient(100% 100%, rgb(246, 245, 242), rgb(241, 239, 234));
-	background-image: radial-gradient(100% 100%, rgb(246, 245, 242), rgb(241, 239, 234));
-	text-align: center;
-	line-height: 36px;
-}
-
-a.tggl.off{
-	background-color: #e7e5db;
-	-moz-box-shadow: 0 1px 0 #ffffff, 0 9px 0 #dadad4;
-	-webkit-box-shadow: 0 1px 0 #ffffff, 0 9px 0 #dadad4;
-	box-shadow: 0 1px 0 #ffffff, 0 9px 0 #dadad4;
-	background-color: #eeece8;
-	background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(250, 249, 246)), to(rgb(226, 224, 219)));
-	background-image: -webkit-linear-gradient(top, rgb(250, 249, 246), rgb(226, 224, 219));
-	background-image: -moz-linear-gradient(top, rgb(250, 249, 246), rgb(226, 224, 219));
-	background-image: -o-linear-gradient(top, rgb(250, 249, 246), rgb(226, 224, 219));
-	background-image: -ms-linear-gradient(top, rgb(250, 249, 246), rgb(226, 224, 219));
-	background-image: linear-gradient(top, rgb(250, 249, 246), rgb(226, 224, 219));
-	filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#faf9f6', EndColorStr='#e2e0db');
-	line-height: 36px;
-	border-top: 1px solid #ebe9e3;
-}
-
-a.tggl.off.active, a.tggl.off:active{
-	background-color: #e7e5db;
-	-moz-box-shadow: 0 4px 1px #e8e7de, 0 5px 2px #d9d6c8;
-	-webkit-box-shadow: 0 4px 1px #e8e7de, 0 5px 2px #d9d6c8;
-	box-shadow: 0 4px 1px #e8e7de, 0 5px 2px #d9d6c8;
-	background-color: #f3f2ee;
-	background-image: -webkit-gradient(radial, 100% 100%,0,100% 100%,200, from(rgb(241, 239, 234)), to(rgb(246, 245, 242)));
-	background-image: -webkit-radial-gradient(100% 100%, rgb(246, 245, 242), rgb(241, 239, 234));
-	background-image: -moz-radial-gradient(100% 100%, rgb(246, 245, 242), rgb(241, 239, 234));
-	background-image: -o-radial-gradient(100% 100%, rgb(246, 245, 242), rgb(241, 239, 234));
-	background-image: -ms-radial-gradient(100% 100%, rgb(246, 245, 242), rgb(241, 239, 234));
-	background-image: radial-gradient(100% 100%, rgb(246, 245, 242), rgb(241, 239, 234));
-	line-height: 36px;
 }
 
 .textarea-animated {
@@ -259,14 +141,11 @@ a.tggl.off.active, a.tggl.off:active{
 #upload{}
 
 #drop{
-	background-color: #2E3134;
 	padding: 40px 50px;
-	border: 20px solid rgba(0, 0, 0, 0);
+	border: 2px dashed;
 	border-radius: 3px;
-	border-image: url('../img/border-image.png') 25 repeat;
 	text-align: center;
 	text-transform: uppercase;
-
 	font-size:16px;
 	font-weight:bold;
 	color:#7f858a;
@@ -298,10 +177,6 @@ a.tggl.off.active, a.tggl.off:active{
 
 #upload ul li.error {
 	position: relative;
-	background: #2E3134;
-	border: 20px solid rgba(0, 0, 0, 0);
-	border-radius: 3px;
-	border-image: url('../img/border-image.png') 25 repeat;
 	text-align: center;
 	text-transform: uppercase;
 	font-size: 16px;
@@ -313,10 +188,6 @@ a.tggl.off.active, a.tggl.off:active{
 
 #upload ul li{
 	position: relative;
-	background-color: #2E3134;
-	border: 20px solid rgba(0, 0, 0, 0);
-	border-radius: 3px;
-	border-image: url('../img/border-image.png') 25 repeat;
 	text-align: center;
 	text-transform: uppercase;
 	font-size: 16px;
@@ -331,10 +202,10 @@ a.tggl.off.active, a.tggl.off:active{
 
 #upload ul li p{
 	white-space: nowrap;
-	color: #EEE;
 	font-size: 16px;
 	font-weight: bold;
-	float:left;
+	float: left;
+	text-transform: none;
 }
 
 #upload ul li p img{
@@ -354,10 +225,6 @@ a.tggl.off.active, a.tggl.off:active{
 	cursor:pointer;
 	float:right;
 	margin-top:10px;
-	color: #5cb85c;
-}
-
-#upload ul li.error span {
 	color: #d9534f;
 }
 

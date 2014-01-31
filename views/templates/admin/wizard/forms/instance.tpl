@@ -39,5 +39,6 @@
 			</label>
 			<a class="slide-button btn"></a>
 		</span>
+		<span class="help-block"><i class="icon-info-circle"></i> {l s='Indicates whether to load the module\'s class when displaying the "Modules" page in the back-office. If your module needs to display a warning message in the "Modules" page, then you must set this attribute to 1.' mod='modulegenerator'}</span>
 	</div>
 </div>

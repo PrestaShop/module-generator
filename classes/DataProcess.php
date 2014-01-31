@@ -24,7 +24,7 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
-class Generator
+class DataProcess
 {
 	/**
 	* Resize, cut and optimize image
@@ -111,12 +111,29 @@ class Generator
 	{
 		if (is_dir($source))
 		{
-			$iterator = new RecursiveIteratorIterator(
-				new RecursiveDirectoryIterator($source, RecursiveDirectoryIterator::SKIP_DOTS),
-				RecursiveIteratorIterator::SELF_FIRST
-			);
+			if (PHP_VERSION_ID < 50300)
+			{
+				$iterator = new RecursiveIteratorIterator(
+					new RecursiveDirectoryIterator($source),
+					RecursiveIteratorIterator::SELF_FIRST
+				);
+			}
+			else
+			{
+				$iterator = new RecursiveIteratorIterator(
+					new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::SKIP_DOTS),
+					RecursiveIteratorIterator::CHILD_FIRST
+				);
+			}
+
 			foreach ($iterator as $file)
 			{
+				if (PHP_VERSION_ID < 50300)
+				{
+					if ($file->isDot())
+						continue;
+				}
+
 				if ($file->isDir())
 				{
 					if (!is_dir($dest.DIRECTORY_SEPARATOR.$iterator->getSubPathName()))
@@ -143,13 +160,29 @@ class Generator
 	{
 		if (is_dir($path))
 		{
-			$iterator = new RecursiveIteratorIterator(
-				new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::SKIP_DOTS),
-				RecursiveIteratorIterator::CHILD_FIRST
-			);
+			if (PHP_VERSION_ID < 50300)
+			{
+				$iterator = new RecursiveIteratorIterator(
+					new RecursiveDirectoryIterator($source),
+					RecursiveIteratorIterator::SELF_FIRST
+				);
+			}
+			else
+			{
+				$iterator = new RecursiveIteratorIterator(
+					new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::SKIP_DOTS),
+					RecursiveIteratorIterator::CHILD_FIRST
+				);
+			}
 
 			foreach ($iterator as $file)
 			{
+				if (PHP_VERSION_ID < 50300)
+				{
+					if ($file->isDot())
+						continue;
+				}
+
 				if ($file->isDir())
 					rmdir($file->getPathname());
 				else

@@ -29,5 +29,6 @@
 	</label>
 	<div class="col-sm-9">
 		<input type="text" class="form-control required" value="" id="module_display_name" name="module_display_name" placeholder="{l s='Module Display Name' mod='modulegenerator'}">
+		<span class="help-block"><i class="icon-info-circle"></i> {l s='A name for the module, which will be displayed in the back-office\'s modules list.' mod='modulegenerator'}</span>
 	</div>
 </div>
