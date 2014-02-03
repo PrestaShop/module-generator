@@ -233,8 +233,11 @@
 	background-position: 0 -12px;
 }
 
-#upload ul li.error p{
-	color:red;
+#upload ul li div.alert{
+	width: auto;
+	margin: 0;
+	padding: 5px 0px;
+	border: 1px solid #DF7B7B;
 }
 
 #upload .progress {

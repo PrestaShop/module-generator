@@ -54,11 +54,16 @@ class DataProcess
 		if (!$dst_height)
 			$dst_height = $src_height;
 
-		$src_image = ImageManager::create($type, $src_file);
+		if ($type === IMAGETYPE_ICO) {
+			die(Tools::jsonEncode(Translate::getModuleTranslation('modulegenerator', 'This is not a valid image file', false)));
+		}
 
+		$src_image = ImageManager::create($type, $src_file);
+		if (!$src_image) {
+			die(Tools::jsonEncode(Translate::getModuleTranslation('modulegenerator', 'This is not a valid image file', false)));
+		}
 		$width_diff = $dst_width / $src_width;
 		$height_diff = $dst_height / $src_height;
-
 		if ($width_diff > 1 && $height_diff > 1)
 		{
 			$next_width = $src_width;
@@ -75,10 +80,9 @@ class DataProcess
 			return false;
 
 		$dest_image = imagecreatetruecolor($dst_width, $dst_height);
-		imagealphablending($dest_image, false);
-		imagesavealpha($dest_image, true);
-		$transparent = imagecolorallocatealpha($dest_image, 255, 255, 255, 127);
-		imagefilledrectangle($dest_image, 0, 0, $dst_width, $dst_height, $transparent);
+
+		// Set transparency
+		self::setTransparency($dest_image, $src_image);
 
 		$dst_x = (($dst_width - $next_width) / 2);
 		$dst_y = (($dst_height - $next_height) / 2);
@@ -87,12 +91,31 @@ class DataProcess
 	}
 
 	/**
-	 * Remplace contents
-	 *
-	 * @param array $source_dest Array with the key as the value to replace the value as content
-	 * @param string $file File in which we will make replacement
-	 * @return void
-	 */
+	* Set transparency
+	*
+	* @param resource $dest_image Image resource identifier such as returned by imagecreatetruecolor()
+	* @param resource $src_image Image resource identifier
+	* @return void
+	*/
+	public static function setTransparency($dest_image, $src_image)
+	{
+		$clearness_index = imagecolortransparent($src_image);
+		$clearness_color = array('red' => 255, 'green' => 255, 'blue' => 255);
+		if ($clearness_index >= 0) {
+			$clearness_color = imagecolorsforindex($src_image, $clearness_index);
+		}
+		$clearness_index = imagecolorallocate($dest_image, $clearness_color['red'], $clearness_color['green'], $clearness_color['blue']);
+		imagefill($dest_image, 0, 0, $clearness_index);
+		imagecolortransparent($dest_image, $clearness_index);
+	}
+
+	/**
+	* Remplace contents
+	*
+	* @param array $source_dest Array with the key as the value to replace the value as content
+	* @param string $file File in which we will make replacement
+	* @return void
+	*/
 	public static function replaceVar(array $source_dest, $file)
 	{
 		$template = strtr(Tools::file_get_contents($file), $source_dest);
@@ -101,12 +124,12 @@ class DataProcess
 	}
 
 	/**
-	 * Copy a file or recursively copy a directories contents
-	 *
-	 * @param string $source The path to the source file/directory
-	 * @param string $dest The path to the destination directory
-	 * @return void
-	 */
+	* Copy a file or recursively copy a directories contents
+	*
+	* @param string $source The path to the source file/directory
+	* @param string $dest The path to the destination directory
+	* @return void
+	*/
 	public static function copyRecursive($source, $dest)
 	{
 		if (is_dir($source))

@@ -62,59 +62,67 @@ class AdminModuleGeneratorController extends ModuleAdminController
 			if (!in_array(Tools::strtolower($extension), $allowed))
 			{
 				header("HTTP/1.0 500 An error occurred while uploading this file");
-				echo '{"status":"An error occurred while uploading this file"}';
-				exit;
+				$this->ajaxProcessModuleGeneratorDelete(false);
+				die(Tools::jsonEncode($this->l('An error occurred while uploading this file')));
 			}
-			if (move_uploaded_file($_FILES['upl']['tmp_name'], $this->tmp_path.$upload_name))
+			elseif (move_uploaded_file($_FILES['upl']['tmp_name'], $this->tmp_path.$upload_name))
 			{
 				if (!DataProcess::resize($this->tmp_path.$upload_name, $this->tmp_path.'logo.png'))
 				{
 					header("HTTP/1.0 500 An error occurred while copying image");
-					echo '{"status":"An error occurred while copying image: '.$upload_name.'"}';
+					unlink($this->tmp_path.$upload_name);
+					$this->ajaxProcessModuleGeneratorDelete(false);
+					die(Tools::jsonEncode($this->l('An error occurred while copying image:').' '.$upload_name));
 				}
 				elseif (!DataProcess::resize($this->tmp_path.$upload_name, $this->tmp_path.'logo.gif', 16, 16, 'gif'))
 				{
 					header("HTTP/1.0 500 An error occurred while copying image");
-					echo '{"status":"An error occurred while copying image: '.$upload_name.'"}';
+					unlink($this->tmp_path.$upload_name);
+					$this->ajaxProcessModuleGeneratorDelete(false);
+					die(Tools::jsonEncode($this->l('An error occurred while copying image:').' '.$upload_name));
 				}
 				elseif ($upload_name !== 'logo.png')
 				{
 					if (!unlink($this->tmp_path.$upload_name))
 					{
 						header("HTTP/1.0 500 An error occurred while delete image");
-						echo '{"status":"An error occurred while delete image: '.$upload_name.'"}';
+						die(Tools::jsonEncode($this->l('An error occurred while delete image:').' '.$upload_name));
 					}
 				}
-				else
-					echo '{"status":"Success uploading '.$upload_name.'"}';
-				exit;
 			}
+			die(Tools::jsonEncode($this->l('Success uploading').' '.$upload_name));
 		}
-		header("HTTP/1.0 500 An error occurred while uploading this file");
-		echo '{"status":"An error occurred while uploading this file"}';
-		exit;
+		else {
+			header("HTTP/1.0 500 An error occurred while uploading this file");
+			die(Tools::jsonEncode($this->l('An error occurred while uploading this file')));
+		}
 	}
 
-	public function ajaxProcessModuleGeneratorDelete()
+	public function ajaxProcessModuleGeneratorDelete($show_error = true)
 	{
 		if (file_exists($this->tmp_path.'logo.png'))
 		{
 			if (!unlink($this->tmp_path.'logo.png'))
 			{
-				header("HTTP/1.0 500 An error occurred while delete image");
-				echo '{"status":"An error occurred while delete image: logo.png"}';
+				if ($show_error === true) {
+					header("HTTP/1.0 500 An error occurred while delete image");
+					die(Tools::jsonEncode($this->l('An error occurred while delete image: logo.png')));
+				}
 			}
 		}
 		if (file_exists($this->tmp_path.'logo.gif'))
 		{
 			if (!unlink($this->tmp_path.'logo.gif'))
 			{
-				header("HTTP/1.0 500 An error occurred while delete image");
-				echo '{"status":"An error occurred while delete image: logo.gif"}';
+				if ($show_error === true) {
+					header("HTTP/1.0 500 An error occurred while delete image");
+					die(Tools::jsonEncode($this->l('An error occurred while delete image: logo.gif')));
+				}
 			}
 		}
-		echo '{"status":"Success deleting logo.png"}';
-		exit;
+		if ($show_error === true) {
+			die(Tools::jsonEncode($this->l('Success deleting logo.png')));
+		}
 	}
 
 	public function ajaxProcessModuleGeneratorDone()

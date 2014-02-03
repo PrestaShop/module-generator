@@ -184,9 +184,10 @@ var Main = function () {
 								});
 							}, 1000);
 						},
-						error: function (xhr, ajaxOptions, thrownError) {
-							alert(xhr.status);
-							alert(thrownError);
+						error: function (jqXHR, textStatus, errorThrown) {
+							dialogRef.getModalBody().children().children().next().children().addClass('progress-bar-danger');
+							dialogRef.getModalBody().children().children().next().children().css('width', '100%');
+							dialogRef.getModalBody().children().children().next().children().attr('aria-valuenow', '100');
 							setTimeout(function(){
 								dialogRef.close();
 							}, 2000);
@@ -243,11 +244,13 @@ var Main = function () {
 				data.context = tpl.appendTo(ul);
 				// Listen for clicks on the cancel icon
 				tpl.find('span').click(function(){
+					var has_error = tpl.find('div').hasClass('alert');
+
 					if(tpl.hasClass('working')){
 						jqXHR.abort();
 					}
 
-					if(j(this).hasClass('icon-times')){
+					if(has_error === false){
 						loadModal(ul);
 					} else {
 						tpl.fadeOut(function(){
@@ -272,8 +275,8 @@ var Main = function () {
 			},
 			fail:function(e, data){
 				// Something has gone wrong!
-				data.context.addClass('error');
-				data.context.prepend('<div class="alert alert-danger">'+data.errorThrown+'</div>');
+				data.context.find('.progress-bar').addClass('progress-bar-danger');
+				data.context.prepend('<div class="alert alert-danger">'+data.jqXHR.responseText+'</div>');
 			},
 			done:function(e, data){
 				var logo = '<img src="../modules/modulegenerator/tmp/logo.png" width="32" height="32" alt="logo" title="logo" />';
