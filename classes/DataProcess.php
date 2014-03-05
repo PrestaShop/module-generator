@@ -1,13 +1,13 @@
 <?php
-/*
+/**
 * 2007-2014 PrestaShop
 *
 * NOTICE OF LICENSE
 *
-* This source file is subject to the Open Software License (OSL 3.0)
+* This source file is subject to the Academic Free License (AFL 3.0)
 * that is bundled with this package in the file LICENSE.txt.
 * It is also available through the world-wide-web at this URL:
-* http://opensource.org/licenses/osl-3.0.php
+* http://opensource.org/licenses/afl-3.0.php
 * If you did not receive a copy of the license and are unable to
 * obtain it through the world-wide-web, please send an email
 * to license@prestashop.com so we can send you a copy immediately.
@@ -18,10 +18,10 @@
 * versions in the future. If you wish to customize PrestaShop for your
 * needs please refer to http://www.prestashop.com for more information.
 *
-*  @author PrestaShop SA <contact@prestashop.com>
-*  @copyright  2007-2014 PrestaShop SA
-*  @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
-*  International Registered Trademark & Property of PrestaShop SA
+* @author    PrestaShop SA <contact@prestashop.com>
+* @copyright 2007-2014 PrestaShop SA
+* @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+* International Registered Trademark & Property of PrestaShop SA
 */
 
 class DataProcess
@@ -38,6 +38,8 @@ class DataProcess
 	*/
 	public static function resize($src_file, $dst_file, $dst_width = 32, $dst_height = 32, $file_type = 'png')
 	{
+		$is_ico = false;
+
 		if (PHP_VERSION_ID < 50300)
 			clearstatcache();
 		else
@@ -54,7 +56,12 @@ class DataProcess
 		if (!$dst_height)
 			$dst_height = $src_height;
 
-		if ($type === IMAGETYPE_ICO) {
+		if (PHP_VERSION_ID < 50300)
+			$is_ico = ($type === 17);
+		else
+			$is_ico = ($type === IMAGETYPE_ICO);
+
+		if ($is_ico === true) {
 			die(Tools::jsonEncode(Translate::getModuleTranslation('modulegenerator', 'This is not a valid image file', false)));
 		}
 
@@ -144,8 +151,8 @@ class DataProcess
 			else
 			{
 				$iterator = new RecursiveIteratorIterator(
-					new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::SKIP_DOTS),
-					RecursiveIteratorIterator::CHILD_FIRST
+					new RecursiveDirectoryIterator($source, RecursiveDirectoryIterator::SKIP_DOTS),
+					RecursiveIteratorIterator::SELF_FIRST
 				);
 			}
 
@@ -231,5 +238,59 @@ class DataProcess
 		unset(".'$'."params);
 
 		return ".'$'."this->display(__FILE__, '$hook_tpl$module_name$val.tpl', ".'$'."this->getCacheId());";
+	}
+
+	public static function generateArchive()
+	{
+
+	}
+
+	/**
+	* Add files and sub-directories in a folder to zip file.
+	* @param string $folder
+	* @param ZipArchive $zipFile
+	* @param int $exclusiveLength Number of text to be exclusived from the file path.
+	*/
+	private static function folderToZip($folder, &$zipFile, $exclusiveLength)
+	{
+		$handle = opendir($folder);
+		while (false !== $f = readdir($handle))
+		{
+			if ($f != '.' && $f != '..')
+			{
+				$filePath = "$folder/$f";
+				// Remove prefix from file path before add to zip.
+				$localPath = substr($filePath, $exclusiveLength);
+				if (is_file($filePath))
+				{
+					$zipFile->addFile($filePath, $localPath);
+				}
+				elseif (is_dir($filePath))
+				{
+					// Add sub-directory.
+					$zipFile->addEmptyDir($localPath);
+					self::folderToZip($filePath, $zipFile, $exclusiveLength);
+				}
+			}
+		}
+		closedir($handle);
+	}
+
+	/**
+	* Zip a folder (include itself).
+	*
+	* @param string $sourcePath Path of directory to be zip.
+	* @param string $outZipPath Path of output zip file.
+	*/
+	public static function zipDir($sourcePath, $outZipPath)
+	{
+		$pathInfo = pathInfo($sourcePath);
+		$parentPath = $pathInfo['dirname'];
+		$dirName = $pathInfo['basename'];
+
+		$zip = new ZipArchive();
+		$zip->open($outZipPath, ZIPARCHIVE::CREATE);
+		self::folderToZip($sourcePath, $zip, strlen("$parentPath/"));
+		$zip->close();
 	}
 }

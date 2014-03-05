@@ -1,11 +1,11 @@
 <!-- Select Multiple -->
 <div class="form-group">
 	<label for="<%= id %>" class="col-sm-2 control-label">
-		<%= label %>
+		<pstrad><%= label %></pstrad>
 	</label>
 	<div class="col-sm-9">
 		<select id="<%= id %>" name="<%= id %>" class="selectpicker show-tick" multiple data-live-search="true"><% _.each(options, function(option) { %>
-			<option value="<%= option %>"><%= option %></option><% }); %>
+			<option value="<%= option %>"><pstrad><%= option %></pstrad></option><% }); %>
 		</select>
 	</div>
 </div>

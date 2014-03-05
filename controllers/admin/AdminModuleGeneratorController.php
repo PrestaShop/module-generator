@@ -1,13 +1,13 @@
 <?php
-/*
+/**
 * 2007-2014 PrestaShop
 *
 * NOTICE OF LICENSE
 *
-* This source file is subject to the Open Software License (OSL 3.0)
+* This source file is subject to the Academic Free License (AFL 3.0)
 * that is bundled with this package in the file LICENSE.txt.
 * It is also available through the world-wide-web at this URL:
-* http://opensource.org/licenses/osl-3.0.php
+* http://opensource.org/licenses/afl-3.0.php
 * If you did not receive a copy of the license and are unable to
 * obtain it through the world-wide-web, please send an email
 * to license@prestashop.com so we can send you a copy immediately.
@@ -18,10 +18,10 @@
 * versions in the future. If you wish to customize PrestaShop for your
 * needs please refer to http://www.prestashop.com for more information.
 *
-*  @author PrestaShop SA <contact@prestashop.com>
-*  @copyright  2007-2014 PrestaShop SA
-*  @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
-*  International Registered Trademark & Property of PrestaShop SA
+* @author    PrestaShop SA <contact@prestashop.com>
+* @copyright 2007-2014 PrestaShop SA
+* @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+* International Registered Trademark & Property of PrestaShop SA
 */
 
 include_once(dirname(__FILE__).'/../../classes/DataProcess.php');
@@ -132,11 +132,6 @@ class AdminModuleGeneratorController extends ModuleAdminController
 
 		// Parse data
 		parse_str($params, $output);
-		//array_map( array('Generator','cleanUp') , $output);
-
-		echo '<pre>';
-		print_r($output);
-		echo '</pre>';
 
 		// Get html form
 		$form = trim(Tools::getValue('form'));
@@ -401,8 +396,8 @@ if ($hook_back !== 'null')
 			$sql_uninstall = "\n\t\t\t|| ".'$'."this->uninstallSQL() === false";
 		}
 
-$license_tpl = "{*
-* 2007-".date('Y')." PrestaShop
+$license_tpl = "{**
+* 2007-2014 PrestaShop
 *
 * NOTICE OF LICENSE
 *
@@ -420,14 +415,14 @@ $license_tpl = "{*
 * versions in the future. If you wish to customize PrestaShop for your
 * needs please refer to http://www.prestashop.com for more information.
 *
-*  @author PrestaShop SA <contact@prestashop.com>
-*  @copyright  2007-".date('Y')." PrestaShop SA
-*  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
-*  International Registered Trademark & Property of PrestaShop SA
+* @author    PrestaShop SA <contact@prestashop.com>
+* @copyright 2007-2014 PrestaShop SA
+* @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+* International Registered Trademark & Property of PrestaShop SA
 *}";
 
-$license_file = "/*
-* 2007-".date('Y')." PrestaShop
+$license_file = "/**
+* 2007-2014 PrestaShop
 *
 * NOTICE OF LICENSE
 *
@@ -445,17 +440,19 @@ $license_file = "/*
 * versions in the future. If you wish to customize PrestaShop for your
 * needs please refer to http://www.prestashop.com for more information.
 *
-*  @author PrestaShop SA <contact@prestashop.com>
-*  @copyright  2007-".date('Y')." PrestaShop SA
-*  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
-*  International Registered Trademark & Property of PrestaShop SA
+* @author    PrestaShop SA <contact@prestashop.com>
+* @copyright 2007-2014 PrestaShop SA
+* @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+* International Registered Trademark & Property of PrestaShop SA
 */";
-
 $mod = ("<?php
 $license_file
 
 if (defined('_PS_VERSION_') === false)
 	exit;
+
+if (!class_exists('TinyCache'))
+	include_once(dirname(__FILE__).'/classes/TinyCache.php');
 
 class $module_name_camel extends ".$extends."Module
 {
@@ -512,9 +509,15 @@ $sql_constant
 	*/
 	private function getLang()
 	{
-		if (self::".'$'."lang_cache == null && !is_array(self::".'$'."lang_cache))
+		".'$'."cache = TinyCache::getCache('language');
+		if (!empty(".'$'."cache))
 		{
-			self::".'$'."lang_cache = array();
+			self::".'$'."lang_cache = TinyCache::getCache('language');
+			return;
+		}
+
+		if (self::".'$'."lang_cache === null)
+		{
 			if (".'$'."languages = Language::getLanguages())
 			{
 				foreach (".'$'."languages as ".'$'."row)
@@ -522,12 +525,15 @@ $sql_constant
 					".'$'."exprow = explode(' (', ".'$'."row['name']);
 					".'$'."subtitle = (isset(".'$'."exprow[1]) ? trim(Tools::substr(".'$'."exprow[1], 0, -1)) : '');
 					self::".'$'."lang_cache[".'$'."row['iso_code']] = array (
+						'id' => (int)".'$'."row['id_lang'],
 						'title' => trim(".'$'."exprow[0]),
 						'subtitle' => ".'$'."subtitle
 					);
 				}
+				// Cache Data
+				TinyCache::setCache('language', self::".'$'."lang_cache);
 				// Clean memory
-				unset(".'$'."row, ".'$'."exprow, ".'$'."result, ".'$'."subtitle, ".'$'."languages);
+				unset(".'$'."row, ".'$'."exprow, ".'$'."subtitle, ".'$'."languages);
 			}
 		}
 	}
@@ -574,6 +580,7 @@ $sql_func_install$sql_func_uninstall$tabs_func_install$tabs_func_uninstall
 				".'$'."this->css_path.'bootstrap.min.css',
 				".'$'."this->css_path.'bootstrap-responsive.min.css',
 				".'$'."this->css_path.'font-awesome.min.css',
+				".'$'."this->css_path.'bootstrap.extend.css',
 				".'$'."this->css_path.".'$'."this->name.'.css'
 			);
 			".'$'."css = array_merge(".'$'."css, ".'$'."css_compatibility);
@@ -628,9 +635,14 @@ $sql_func_install$sql_func_uninstall$tabs_func_install$tabs_func_uninstall
 			unset(".'$'."tab, ".'$'."token_mod, ".'$'."token_pos, ".'$'."token_trad);
 		}
 
+		".'$'."lang = 'EN';
+		if (".'$'."this->context->language->iso_code == 'fr')
+			".'$'."lang = 'FR';
+
 		".'$'."this->context->smarty->assign(array(
 			'module_name' => ".'$'."this->name,
 			'module_display' => ".'$'."this->displayName,
+			'guide_link' => 'docs/'.".'$'."this->name.'_'.".'$'."lang.'.pdf',
 			'ps_version' => (bool)version_compare(_PS_VERSION_, '1.6', '>'),
 		));
 
@@ -644,7 +656,7 @@ $hook_func_front$hook_func_front
 			DataProcess::deleteRecursive($module_dir);
 
 		if (!mkdir($structure, 0777, true))
-			die('Echec lors de la création des répertoires...');
+			die('Echec lors de la création des répertoires... ('.$structure.')');
 
 		if ($module_controller === 1)
 		{
@@ -664,12 +676,6 @@ $hook_func_front$hook_func_front
 				file_put_contents($module_dir.'controllers/admin/Admin'.$module_name_camel.'Controller.php', $controller);
 			}
 			DataProcess::copyRecursive($this->source_path.'index.php', $module_dir.'controllers/index.php');
-
-			// if (!empty($moduleFrontController))
-			// {
-			// 	mkdir($module_dir.'controllers/front');
-			// 	DataProcess::copyRecursive($this->source_path.'index.php', $module_dir.'controllers/front/index.php');
-			// }
 		}
 
 		// Create module file
@@ -687,16 +693,27 @@ $hook_func_front$hook_func_front
 
 		// Replacement of some variables
 		$conf = array(
-			'[license]' => $license_tpl,
 			'[form]' => $form,
+			'[license]' => $license_tpl,
 			'[module]' => $module_name,
-			'[text]' => $module_display
+			'[text]' => $module_display,
+			'<pstrad>' => "{l s='",
+			'</pstrad>' => "' mod='$module_name'}",
 		);
 
-		DataProcess::replaceVar($conf, $template_dir.'admin/configuration.tpl');
-		DataProcess::replaceVar($conf, $template_dir.'admin/addons.tpl');
-		DataProcess::replaceVar($conf, $template_dir.'admin/header.tpl');
-		DataProcess::replaceVar($conf, $template_dir.'admin/translations.tpl');
+		$tpl_file = array(
+			$template_dir.'admin/header.tpl',
+			$template_dir.'admin/tabs/config.tpl',
+			$template_dir.'admin/translations.tpl',
+			$template_dir.'admin/tabs/contact.tpl',
+			$template_dir.'admin/configuration.tpl',
+			$template_dir.'admin/tabs/documentation.tpl',
+		);
+
+		DataProcess::replaceVar($conf, $template_dir.'admin/tabs/config.tpl');
+
+		foreach ($tpl_file as $tpl)
+			DataProcess::replaceVar($conf, $tpl);
 
 		// Rename css & js
 		rename($module_dir.'css/module.css', $module_dir.'css/'.$module_name.'.css');
@@ -751,6 +768,27 @@ $hook_func_front$hook_func_front
 			}
 			unset($val);
 		}
-		exit;
+
+		$zip_name = $module_name.'.zip';
+		$zip_path = $this->render_path.$zip_name;
+		$zip_url = 'http://'.$_SERVER['HTTP_HOST'].__PS_BASE_URI__.'modules/modulegenerator/renders/'.$zip_name;
+		DataProcess::zipDir($module_dir, $zip_path);
+
+		// if (ob_get_length() > 0)
+		// 	ob_end_clean();
+
+		// header('Pragma: public');
+		// header('Expires: 0');
+		// header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+		// header('Last-Modified: '.gmdate ('D, d M Y H:i:s', filemtime ($file_name)).' GMT');
+		// header('Cache-Control: private',false);
+		// header('Content-Type: multipart/x-zip');
+		// header('Content-Disposition:attachment;filename="'.$zip_name.'"');
+		// header("Content-Transfer-Encoding: binary");
+		// header("Content-Length: ".filesize($zip_name));
+		// readfile($zip_path);
+		// // unlink($zip_path);
+		
+		exit($zip_url);
 	}
 }

@@ -179,6 +179,8 @@ var Main = function () {
 							dialogRef.getModalBody().children().children().next().children().attr('aria-valuenow', '100');
 							setTimeout(function(){
 								dialogRef.close();
+									j('#drop').show();
+								j('#drop').fadeTo( "slow", 1);
 								ul.fadeOut(function(){
 									ul.find('li').first().remove();
 								});
@@ -282,6 +284,9 @@ var Main = function () {
 				var logo = '<img src="../modules/modulegenerator/tmp/logo.png" width="32" height="32" alt="logo" title="logo" />';
 				data.context.fadeIn(function(){
 					data.context.find('p').prepend(logo);
+				});
+				j('#drop').fadeOut(function(){
+					this.hide();
 				});
 			}
 		});
@@ -425,7 +430,7 @@ var Main = function () {
 			j.ajax({
 				type: 'POST',
 				url: admin_modulegenerator_ajax_url,
-				dataType: 'json',
+				dataType: 'html',
 				data: {
 					data: data,
 					form: form,
@@ -435,6 +440,8 @@ var Main = function () {
 					id_tab : current_id_tab
 				},
 				success : function (data){
+					p(data);
+					window.location.assign(data);
 				},
 			});
 		}

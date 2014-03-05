@@ -1,24 +1,28 @@
+// function for debug
+var p = function () {
+	var arg_lenght = arguments.length;
+	for(var i=0; i<arg_lenght; i++) {
+		if (typeof arguments[i] === 'object') {
+			console.table(arguments[i]);
+		}
+		else {
+			console.log(arguments[i]);
+		}
+	}
+};
+
 // Main Function
 var Main = function () {
-	// function for debug
-	var p = function () {
-		console.log(arguments);
-	};
+
 	// function to displays collapsible content panels
 	var runPanelToggle = function () {
-		$('.panel-tools .panel-collapse').bind('click', function (e) {
-			e.preventDefault();
-			var $el = jQuery(this).parent().closest(".panel").children(".panel-body");
-			if ($(this).hasClass("collapses")) {
-				// Hide the matched elements with a sliding motion.
-				$(this).addClass("expand").removeClass("collapses");
-				$el.slideUp(200);
-			} else {
-				// Display the matched elements with a sliding motion.
-				$(this).addClass("collapses").removeClass("expand");
-				$el.slideDown(200);
+		// Tab panel active
+		$(".list-group-item").on('click', function() {
+			var $el = $(this).parent().closest(".list-group").children(".active");
+			if ($el.hasClass("active")) {
+				$el.removeClass("active");
+				$(this).addClass("active");
 			}
-			return false;
 		});
 	};
 	// function to custom select
@@ -40,7 +44,7 @@ var Main = function () {
 				cloneMulti.find('.shopList').addClass('selectpicker show-menu-arrow').attr('data-live-search', 'true');
 				cloneMulti.insertBefore("#modulecontent");
 				// Copy checkbox for multishop
-				cloneActiveShop = j.trim($('table[class="table"] tr:nth-child(2) th').first().html());
+				cloneActiveShop = $.trim($('table[class="table"] tr:nth-child(2) th').first().html());
 				$(cloneActiveShop).insertAfter("#tab_translation");
 			}
 		}
@@ -52,6 +56,7 @@ var Main = function () {
 		$('.selectpicker').each(function(){
 			var select = $(this);
 			select.on('click', function() {
+				$(this).parents('.bootstrap-select').addClass('open');
 				$(this).parents('.bootstrap-select').toggleClass('open');
 			});
 		});

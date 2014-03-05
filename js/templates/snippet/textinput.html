@@ -1,10 +1,10 @@
 <!-- Text input-->
 <div class="form-group">
 	<label for="<%= id %>" class="col-sm-2 control-label">
-		<%= label %> 
+		<pstrad><%= label %></pstrad>
 	</label>
 	<div class="col-sm-9">
 		<input id="<%= id %>" name="<%= id %>" type="text" placeholder="<%= placeholder %>" class="form-control <%= inputsize %>" <% if(required) {%> required <% } %> />
-		<% if (helptext.length > 0) { %><span class="help-block"><i class="fa fa-info-circle"></i> <%= helptext %></span><% } %>
+		<% if (helptext.length > 0) { %><span class="help-block"><i class="icon-info-circle"></i> <pstrad><%= helptext %></pstrad></span><% } %>
 	</div>
 </div>

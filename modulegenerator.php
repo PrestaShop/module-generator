@@ -1,13 +1,13 @@
 <?php
-/*
+/**
 * 2007-2014 PrestaShop
 *
 * NOTICE OF LICENSE
 *
-* This source file is subject to the Open Software License (OSL 3.0)
+* This source file is subject to the Academic Free License (AFL 3.0)
 * that is bundled with this package in the file LICENSE.txt.
 * It is also available through the world-wide-web at this URL:
-* http://opensource.org/licenses/osl-3.0.php
+* http://opensource.org/licenses/afl-3.0.php
 * If you did not receive a copy of the license and are unable to
 * obtain it through the world-wide-web, please send an email
 * to license@prestashop.com so we can send you a copy immediately.
@@ -18,14 +18,16 @@
 * versions in the future. If you wish to customize PrestaShop for your
 * needs please refer to http://www.prestashop.com for more information.
 *
-*  @author PrestaShop SA <contact@prestashop.com>
-*  @copyright  2007-2014 PrestaShop SA
-*  @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
-*  International Registered Trademark & Property of PrestaShop SA
+* @author    PrestaShop SA <contact@prestashop.com>
+* @copyright 2007-2014 PrestaShop SA
+* @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+* International Registered Trademark & Property of PrestaShop SA
 */
 
 if (defined('_PS_VERSION_') === false)
 	exit;
+
+include_once(dirname(__FILE__).'/classes/TinyCache.php');
 
 class ModuleGenerator extends Module
 {
@@ -100,14 +102,21 @@ class ModuleGenerator extends Module
 			self::$tabs_cache = $this->getCache();
 	}
 
-	/*
-	** Get all lang actived
+	/**
+	* Get Language
+	* @return array Lang
 	*/
 	private function getLang()
 	{
-		if (self::$lang_cache === null && !is_array(self::$lang_cache))
+		$cache = TinyCache::getCache('language');
+		if (!empty($cache))
 		{
-			self::$lang_cache = array();
+			self::$lang_cache = TinyCache::getCache('language');
+			return;
+		}
+
+		if (self::$lang_cache === null)
+		{
 			if ($languages = Language::getLanguages())
 			{
 				foreach ($languages as $row)
@@ -115,11 +124,15 @@ class ModuleGenerator extends Module
 					$exprow = explode(' (', $row['name']);
 					$subtitle = (isset($exprow[1]) ? trim(Tools::substr($exprow[1], 0, -1)) : '');
 					self::$lang_cache[$row['iso_code']] = array (
+						'id' => (int)$row['id_lang'],
 						'title' => trim($exprow[0]),
 						'subtitle' => $subtitle
 					);
 				}
-				unset($row, $exprow, $languages, $subtitle);
+				// Cache Data
+				TinyCache::setCache('language', self::$lang_cache);
+				// Clean memory
+				unset($row, $exprow, $subtitle, $languages);
 			}
 		}
 	}

@@ -389,45 +389,6 @@ body {
 	padding: 4px 12px;
 }
 
-
-.bootstrap .btn-group-action .btn-group {
-	white-space: nowrap;
-	float: right;
-}
-
-.bootstrap .pull-right {
-	float: right !important;
-}
-
-.bootstrap .btn-group, .bootstrap .btn-group-vertical {
-	position: relative;
-	display: inline-block;
-	vertical-align: middle;
-}
-
-.bootstrap .dropdown-menu > li a {
-	padding: 5px 10px;
-}
-
-.bootstrap .dropdown-menu > li > a {
-	display: block;
-	padding: 3px 20px;
-	clear: both;
-	font-weight: normal;
-	line-height: 1.42857;
-	color: #333333;
-}
-
-.bootstrap .pull-right > .dropdown-menu {
-	right: 0;
-	left: auto;
-}
-
-.bootstrap .dropdown-menu {
-	text-align: left;
-	padding: 5px;
-}
-
 /* FONT AWESOME EXTRAS -------------------------- */
 .icon-power-off:before, .icon-off:before, .bootstrap .process-icon-off:before { content: "\f011"; }
 .icon-trash:before, .bootstrap .process-icon-delete:before, .bootstrap .process-icon-uninstall:before { content: "\f014"; }

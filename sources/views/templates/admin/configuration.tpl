@@ -1,28 +1,37 @@
 [license]
 
-<div class="bootstrap">
 {if $ps_version == 0}
+<div class="bootstrap">
 	<!-- Beautiful header -->
 	{include file="./header.tpl"}
 {/if}
 	<!-- Module content -->
-	<div id="modulecontent" class="panel panel-default">
-		<h3>
-			<i class="icon-cogs"></i>
-			{l s='Configuration' mod='[module]'}
-			<div class="panel-tools">
-				<a class="btn btn-xs btn-link panel-collapse collapses"></a>
+	<!-- Module content -->
+	<div id="modulecontent" class="clearfix">
+		<!-- Nav tabs -->
+		<div class="col-lg-2">
+			<div class="list-group">
+				<a href="#documentation" class="list-group-item active" data-toggle="tab"><i class="icon-book"></i> {l s='Documentation' mod='[module]'}</a>
+				<a href="#congif" class="list-group-item" data-toggle="tab"><i class="icon-indent"></i> {l s='Configuration' mod='[module]'}</a>
+				<a href="#contacts" class="list-group-item" data-toggle="tab"><i class="icon-envelope"></i> {l s='Contact' mod='[module]'}</a>
 			</div>
-		</h3>
-		<div class="form-group">
-			[form]
+		</div>
+		<!-- Tab panes -->
+		<div class="tab-content col-lg-10">
+
+			<div class="tab-pane active panel" id="documentation">
+				{include file="./tabs/documentation.tpl"}
+			</div>
+
+			<div class="tab-pane panel" id="congif">
+				{include file="./tabs/config.tpl"}
+			</div>
+
+			{include file="./tabs/contact.tpl"}
 		</div>
 	</div>
-	<!-- Addons notice -->
-	{include file="./addons.tpl"}
-
 {if $ps_version == 0}
 	<!-- Manage translations -->
 	{include file="./translations.tpl"}
-{/if}
 </div>
+{/if}

@@ -1,1 +1,10 @@
 <!-- Prepended text-->
+<div class="form-group">
+	<label class="control-label col-lg-3" for="<%= id %>">
+		<pstrad><%= label %></pstrad>
+	</label>
+	<div class="input-group col-lg-2">
+		<span class="input-group-addon"><pstrad><%= label %></pstrad></span>
+		<input id="<%= id %>" name="<%= id %>" class="<%= inputsize %>" placeholder="<%= placeholder %>" type="text"<% if(required) {%> required <% } %> />
+	</div>
+</div>
