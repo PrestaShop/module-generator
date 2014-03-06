@@ -30,11 +30,13 @@
 	<div class="col-sm-9">
 		<select class="selectpicker show-menu-arrow  show-tick span2">
 			<optgroup label="1.6.0">
+				<option value="1.6.0.4">1.6.0.4</option>
 				<option value="1.6.0.3">1.6.0.3</option>
 				<option value="1.6.0.2">1.6.0.2</option>
 				<option value="1.6.0.1">1.6.0.1</option>
 			</optgroup>
 			<optgroup label="1.5.6">
+				<option value="1.5.6.2">1.5.6.2</option>
 				<option value="1.5.6.1">1.5.6.1</option>
 				<option value="1.5.6.0">1.5.6.0</option>
 			</optgroup>
@@ -69,11 +71,14 @@
 
 		<select class="selectpicker show-menu-arrow  show-tick span2">
 			<optgroup label="1.6.0">
+				<option value="1.6.0.4" selected="selected">1.6.0.4</option>
+				<option value="1.6.0.3">1.6.0.3</option>
 				<option value="1.6.0.2">1.6.0.2</option>
 				<option value="1.6.0.1">1.6.0.1</option>
 			</optgroup>
 			<optgroup label="1.5.6">
-				<option value="1.5.6.1" selected="selected">1.5.6.1</option>
+				<option value="1.5.6.2">1.5.6.2</option>
+				<option value="1.5.6.1">1.5.6.1</option>
 				<option value="1.5.6.0">1.5.6.0</option>
 			</optgroup>
 			<optgroup label="1.5.5">

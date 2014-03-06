@@ -179,8 +179,7 @@ var Main = function () {
 							dialogRef.getModalBody().children().children().next().children().attr('aria-valuenow', '100');
 							setTimeout(function(){
 								dialogRef.close();
-									j('#drop').show();
-								j('#drop').fadeTo( "slow", 1);
+								j('#drop').fadeToggle();
 								ul.fadeOut(function(){
 									ul.find('li').first().remove();
 								});
@@ -285,9 +284,7 @@ var Main = function () {
 				data.context.fadeIn(function(){
 					data.context.find('p').prepend(logo);
 				});
-				j('#drop').fadeOut(function(){
-					this.hide();
-				});
+				j('#drop').fadeToggle();
 			}
 		});
 		// Prevent the default action when a file is dropped on the window
