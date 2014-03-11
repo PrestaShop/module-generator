@@ -170,7 +170,7 @@ class AdminModuleGeneratorController extends ModuleAdminController
 		$hook_front = strip_tags($output['module_hook_front']);
 		$hook_back = strip_tags($output['module_hook_back']);
 
-		$hook_install = $hook_func_front = $hook_func_front = '';
+		$hook_install = $hook_func_front = $hook_func_back = '';
 if ($hook_front !== 'null')
 {
 	$explode_front = explode(',', $hook_front);
@@ -241,14 +241,14 @@ if ($hook_back !== 'null')
 	foreach ($explode_back as $val)
 		$hook_install .= "\n\t\t\t|| ".'$'."this->registerHook('$val') === false";
 
-	$hook_func_front .= "\n\t/**
+	$hook_func_back .= "\n\t/**
 	** BACK HOOK
 	*/
 	";
 	$is_left = $is_right = '';
 	foreach ($explode_back as $val)
 	{
-	$hook_func_front .= "public function hook$val(".'$'."params)
+	$hook_func_back .= "public function hook$val(".'$'."params)
 	{
 		// Check if the module is active
 		if (!".'$'."this->active)
@@ -263,7 +263,8 @@ if ($hook_back !== 'null')
 		if (trim($hook_func_front) === '')
 			$hook_func_front = rtrim($hook_func_front);
 
-		$hook_func_front = trim($hook_func_front);
+		$hook_func_front = rtrim($hook_func_front);
+		$hook_func_back = rtrim($hook_func_back);
 
 		if ($hook_back === 'null' && $hook_front === 'null')
 			$hook_install = ')';
@@ -445,7 +446,7 @@ $license_file = "/**
 * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 * International Registered Trademark & Property of PrestaShop SA
 */";
-$mod = ("<?php
+$mod = trim("<?php
 $license_file
 
 if (defined('_PS_VERSION_') === false)
@@ -648,7 +649,7 @@ $sql_func_install$sql_func_uninstall$tabs_func_install$tabs_func_uninstall
 
 		return ".'$'."this->display(__FILE__, 'views/templates/admin/configuration.tpl');
 	}
-$hook_func_front$hook_func_front
+$hook_func_front$hook_func_back
 }");
 
 		$structure = $module_dir.'views/';
@@ -774,21 +775,6 @@ $hook_func_front$hook_func_front
 		$zip_url = 'http://'.$_SERVER['HTTP_HOST'].__PS_BASE_URI__.'modules/modulegenerator/renders/'.$zip_name;
 		DataProcess::zipDir($module_dir, $zip_path);
 
-		// if (ob_get_length() > 0)
-		// 	ob_end_clean();
-
-		// header('Pragma: public');
-		// header('Expires: 0');
-		// header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-		// header('Last-Modified: '.gmdate ('D, d M Y H:i:s', filemtime ($file_name)).' GMT');
-		// header('Cache-Control: private',false);
-		// header('Content-Type: multipart/x-zip');
-		// header('Content-Disposition:attachment;filename="'.$zip_name.'"');
-		// header("Content-Transfer-Encoding: binary");
-		// header("Content-Length: ".filesize($zip_name));
-		// readfile($zip_path);
-		// // unlink($zip_path);
-		
 		exit($zip_url);
 	}
 }
