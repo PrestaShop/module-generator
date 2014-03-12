@@ -70,18 +70,25 @@ class AdminModuleGeneratorController extends ModuleAdminController
 				if (!DataProcess::resize($this->tmp_path.$upload_name, $this->tmp_path.'logo.png'))
 				{
 					header("HTTP/1.0 500 An error occurred while copying image");
-					unlink($this->tmp_path.$upload_name);
-					$this->ajaxProcessModuleGeneratorDelete(false);
+					if ($upload_name !== 'logo.png' || $upload_name !== 'logo.gif')
+					{
+						unlink($this->tmp_path.$upload_name);
+						$this->ajaxProcessModuleGeneratorDelete(false);
+					}
 					die(Tools::jsonEncode($this->l('An error occurred while copying image:').' '.$upload_name));
 				}
+				
 				elseif (!DataProcess::resize($this->tmp_path.$upload_name, $this->tmp_path.'logo.gif', 16, 16, 'gif'))
 				{
 					header("HTTP/1.0 500 An error occurred while copying image");
-					unlink($this->tmp_path.$upload_name);
-					$this->ajaxProcessModuleGeneratorDelete(false);
+					if ($upload_name !== 'logo.png' || $upload_name !== 'logo.gif')
+					{
+						unlink($this->tmp_path.$upload_name);
+						$this->ajaxProcessModuleGeneratorDelete(false);
+					}
 					die(Tools::jsonEncode($this->l('An error occurred while copying image:').' '.$upload_name));
 				}
-				elseif ($upload_name !== 'logo.png')
+				elseif (!($upload_name === 'logo.png' || $upload_name === 'logo.gif'))
 				{
 					if (!unlink($this->tmp_path.$upload_name))
 					{
