@@ -38,6 +38,7 @@
 	max-width: 50%;
 	width: 50%;
 }
+
 .swMain > ul li > a.selected:before, .swMain li > a.done:before {
 	border-color: #5293C4;
 }

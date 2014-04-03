@@ -193,7 +193,7 @@ class DataProcess
 			if (PHP_VERSION_ID < 50300)
 			{
 				$iterator = new RecursiveIteratorIterator(
-					new RecursiveDirectoryIterator($source),
+					new RecursiveDirectoryIterator($path),
 					RecursiveIteratorIterator::SELF_FIRST
 				);
 			}
