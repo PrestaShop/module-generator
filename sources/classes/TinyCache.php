@@ -22,6 +22,10 @@
 * @copyright 2007-2014 PrestaShop SA
 * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 * International Registered Trademark & Property of PrestaShop SA
+* -------------------------------------------------------------------
+*
+* Description :
+*   This is a PHP class for generating cache file.
 */
 
 class TinyCache
@@ -52,6 +56,13 @@ class TinyCache
 		return self::$path;
 	}
 
+	/**
+	* Get TTL
+	*
+	* @param string $name
+	* @param int $ttl
+	* @return sting
+	*/
 	public static function getTTL($name, $ttl = 0)
 	{
 		if ($ttl == 0) $ttl = self::SEO_TIMEEXPIRE_LANG;
@@ -63,6 +74,7 @@ class TinyCache
 	* Retrieve a data from cache
 	*
 	* @param string $name
+	* @param int $ttl
 	* @return array
 	*/
 	public static function getCache($name, $ttl = 0)
@@ -85,7 +97,8 @@ class TinyCache
 	/**
 	* Store a data in cache
 	*
-	* @param mixed $value
+	* @param string $name
+	* @param mixed $data
 	* @return bool
 	*/
 	public static function setCache($name, $data)
@@ -94,9 +107,51 @@ class TinyCache
 	}
 
 	/**
+	* Delete all cache
+	*/
+	public static function clearAllCache()
+	{
+		$is_dot = array ('.', '..');
+		if (is_dir(self::$path))
+		{
+			if (version_compare(phpversion(), '5.3', '<'))
+			{
+				$iterator = new RecursiveIteratorIterator(
+					new RecursiveDirectoryIterator(self::$path),
+					RecursiveIteratorIterator::SELF_FIRST
+				);
+			}
+			else
+			{
+				$iterator = new RecursiveIteratorIterator(
+					new RecursiveDirectoryIterator(self::$path, RecursiveDirectoryIterator::SKIP_DOTS),
+					RecursiveIteratorIterator::CHILD_FIRST
+				);
+			}
+
+			foreach ($iterator as $file)
+			{
+				if (version_compare(phpversion(), '5.2.17', '<='))
+				{
+					if (in_array($file->getBasename(), $is_dot))
+						continue;
+				}
+				elseif (version_compare(phpversion(), '5.3', '<'))
+				{
+					if ($file->isDot())
+						continue;
+				}
+				if ($file->getBasename() !== 'index.php')
+					unlink($file->getPathname());
+			}
+			unset($iterator, $file);
+		}
+	}
+
+	/**
 	* Delete a data in cache
 	*
-	* @param mixed $value
+	* @param string $name
 	* @return bool
 	*/
 	public static function clearCache($name)
@@ -108,22 +163,25 @@ class TinyCache
 	/**
 	* Compress a data in cache
 	*
-	* @param mixed $value
-	* @return bool
+	* @param mixed $string_array
+	* @return mixed
 	*/
 	public static function compressObject($string_array)
 	{
-		return (strtr(base64_encode(addslashes(gzcompress(serialize($string_array), 9))), '+/=', '-_,'));
+		$base_encode = 'base64_encode';
+		return (strtr($base_encode(addslashes(gzcompress(serialize($string_array), 9))), '+/=', '-_,'));
 	}
 
 	/**
 	* Uncompress a data in cache
 	*
-	* @param mixed $value
-	* @return bool
+	* @param mixed $string_array
+	* @return mixed
 	*/
 	public static function uncompressObject($string_array)
 	{
-		return (unserialize(gzuncompress(stripslashes(base64_decode(strtr($string_array, '-_,', '+/='))))));
+		$base_decode = 'base64_decode';
+		$strip_slashes = 'stripslashes';
+		return (unserialize(gzuncompress($strip_slashes($base_decode(strtr($string_array, '-_,', '+/='))))));
 	}
 }
