@@ -27,7 +27,8 @@
 if (defined('_PS_VERSION_') === false)
 	exit;
 
-include_once(dirname(__FILE__).'/classes/TinyCache.php');
+if (!class_exists('TinyCache'))
+	require_once(dirname(__FILE__).'/classes/TinyCache.php');
 
 class ModuleGenerator extends Module
 {

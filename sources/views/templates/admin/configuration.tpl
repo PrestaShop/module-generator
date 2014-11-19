@@ -13,7 +13,7 @@
 			<div class="list-group">
 				<a href="#documentation" class="list-group-item active" data-toggle="tab"><i class="icon-book"></i> {l s='Documentation' mod='[module]'}</a>
 				<a href="#congif" class="list-group-item" data-toggle="tab"><i class="icon-indent"></i> {l s='Configuration' mod='[module]'}</a>
-				<a href="#contacts" class="list-group-item" data-toggle="tab"><i class="icon-envelope"></i> {l s='Contact' mod='[module]'}</a>
+				<a href="#contacts" class="contacts list-group-item" data-toggle="tab"><i class="icon-envelope"></i> {l s='Contact' mod='[module]'}</a>
 			</div>
 		</div>
 		<!-- Tab panes -->

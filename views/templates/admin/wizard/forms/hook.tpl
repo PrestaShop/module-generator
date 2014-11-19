@@ -28,7 +28,7 @@
 		{l s='Add Hooks' mod='modulegenerator'}
 	</label>
 	<div class="col-sm-9">
-		<select name="module_hook_front" class="selectpicker show-menu-arrow span2" multiple data-live-search="true">
+		<select name="module_hook_front" class="selectpicker show-menu-arrow show-tick" multiple data-live-search="true">
 			<optgroup label="General hooks">
 				<option value="displayHeader">displayHeader</option>
 				<option value="displayTop">displayTop</option>
@@ -102,7 +102,7 @@
 			-->
 		</select>
 
-		<select name="module_hook_back" class="selectpicker show-menu-arrow span2" multiple data-live-search="true">
+		<select name="module_hook_back" class="selectpicker show-menu-arrow show-tick" multiple data-live-search="true">
 			<optgroup label="General hooks">
 				<option value="displayBackOfficeHome">displayBackOfficeHome</option>
 				<option value="displayBackOfficeHeader">displayBackOfficeHeader</option>

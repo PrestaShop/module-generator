@@ -28,7 +28,7 @@
 		{l s='Module Version Compliance' mod='modulegenerator'}<br /><small>(min / max)</small>
 	</label>
 	<div class="col-sm-9">
-		<select class="selectpicker show-menu-arrow  show-tick span2">
+		<select class="selectpicker show-menu-arrow show-tick">
 			<optgroup label="1.6.0">
 				<option value="1.6.0.4">1.6.0.4</option>
 				<option value="1.6.0.3">1.6.0.3</option>
@@ -69,7 +69,7 @@
 			</optgroup>
 		</select>
 
-		<select class="selectpicker show-menu-arrow  show-tick span2">
+		<select class="selectpicker show-menu-arrow show-tick">
 			<optgroup label="1.6.0">
 				<option value="1.6.0.4" selected="selected">1.6.0.4</option>
 				<option value="1.6.0.3">1.6.0.3</option>

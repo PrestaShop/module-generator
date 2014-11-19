@@ -1,12 +1,23 @@
 // function for debug
+var cleanInt = function (x) {
+	x = Number(x);
+	return x >= 0 ? Math.floor(x) : Math.ceil(x);
+}
+
 var p = function () {
-	var arg_lenght = arguments.length;
-	for(var i=0; i<arg_lenght; i++) {
-		if (typeof arguments[i] === 'object') {
-			console.table(arguments[i]);
-		}
-		else {
-			console.log(arguments[i]);
+	var i = 0,
+	arg_lenght = arguments.length;
+	if (arg_lenght > 0) {
+		for (i; i<arg_lenght; i++) {
+			if (arguments[i] instanceof Array) {
+				console.log(arguments[i]);
+			}
+			else if (typeof(arguments[i]) === 'object') {
+				console.table(arguments[i]);
+			} else {
+				// console.log(arguments.callee.caller.toString());
+				console.log(arguments[i]);
+			}
 		}
 	}
 };
@@ -16,6 +27,15 @@ var Main = function () {
 
 	// function to displays collapsible content panels
 	var runPanelToggle = function () {
+		$(".contactus").on('click', function() {
+			$href = $.trim($(this).attr('href'));
+			$(".list-group a.active").each(function() {
+				$(this).removeClass("active");
+			});
+
+			$(".list-group a.contacts").addClass("active");
+		});
+
 		// Tab panel active
 		$(".list-group-item").on('click', function() {
 			var $el = $(this).parent().closest(".list-group").children(".active");

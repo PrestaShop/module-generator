@@ -37,15 +37,35 @@
 	}
 })(jQuery);
 
+var cleanInt = function (x) {
+	x = Number(x);
+	return x >= 0 ? Math.floor(x) : Math.ceil(x);
+}
+
+var p = function () {
+	var i = 0,
+	arg_lenght = arguments.length;
+	if (arg_lenght > 0) {
+		for (i; i<arg_lenght; i++) {
+			if (arguments[i] instanceof Array) {
+				console.log(arguments[i]);
+			}
+			else if (typeof(arguments[i]) === 'object') {
+				console.table(arguments[i]);
+			} else {
+				// console.log(arguments.callee.caller.toString());
+				console.log(arguments[i]);
+			}
+		}
+	}
+};
+
+
 // Main Function
 var j = jQuery.noConflict();
 var first = 0;
 
 var Main = function () {
-	// function for debug
-	var p = function () {
-		console.log(arguments);
-	};
 	// function to displays collapsible content panels
 	var runPanelToggle = function () {
 		j('.panel-tools .panel-collapse').bind('click', function (e) {
@@ -118,6 +138,7 @@ var Main = function () {
 		j('.selectpicker').each(function(){
 			var select = j(this);
 			select.on('click', function() {
+				p(j(this).parents('.bootstrap-select'));
 				j(this).parents('.bootstrap-select').toggleClass('open');
 			});
 		});

@@ -1,7 +1,7 @@
 [license]
 
 <h3>
-	<i class="icon-link"></i> {l s='Configure' mod='[module]'}
+	<i class="icon-indent"></i> {l s='Configure' mod='[module]'}
 </h3>
 
 <div class="table-responsive clearfix">
