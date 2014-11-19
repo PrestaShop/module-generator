@@ -138,8 +138,7 @@ var Main = function () {
 		j('.selectpicker').each(function(){
 			var select = j(this);
 			select.on('click', function() {
-				p(j(this).parents('.bootstrap-select'));
-				j(this).parents('.bootstrap-select').toggleClass('open');
+				j(this).parent('.bootstrap-select').toggleClass('open');
 			});
 		});
 
@@ -285,7 +284,7 @@ var Main = function () {
 			},
 			progress: function(e, data){
 				// Calculate the completion percentage of the upload
-				var progress = parseInt(data.loaded / data.total * 100, 10);
+				var progress = cleanInt(data.loaded / data.total * 100);
 				// Update the hidden input field and trigger a change
 				data.context.find('.progress-bar').css('width', progress + '%');
 				data.context.find('.progress-bar').attr('aria-valuenow', progress);
