@@ -497,6 +497,13 @@ $sql_constant
 		".'$'."this->bootstrap = true;
 		".'$'."this->secure_key = Tools::encrypt(".'$'."this->name);
 
+		/** Backward compatibility */
+		if (version_compare(_PS_VERSION_, '1.5', '<'))
+		{
+			".'$'."this->local_path = _PS_MODULE_DIR_.'/'.".'$'."this->name.'/';
+			require(".'$'."this->local_path.'/backward_compatibility/backward.php');
+		}
+
 		parent::__construct();
 
 		".'$'."this->displayName = ".'$'."this->l('$module_display');
@@ -552,7 +559,7 @@ $sql_func_install$sql_func_uninstall$tabs_func_install$tabs_func_uninstall
 	*/
 	public function install()
 	{
-		if (Shop::isFeatureActive())
+		if (version_compare(_PS_VERSION_, '1.5', '>=') && Shop::isFeatureActive())
 			Shop::setContext(Shop::CONTEXT_ALL);
 
 		if (parent::install() === false$sql_install$tabs_install$hook_install
@@ -576,6 +583,7 @@ $sql_func_install$sql_func_uninstall$tabs_func_install$tabs_func_uninstall
 	*/
 	public function loadAsset()
 	{
+		".'$'."return = '';
 		".'$'."css_compatibility = ".'$'."js_compatibility = array();
 
 		// Load CSS
@@ -593,7 +601,16 @@ $sql_func_install$sql_func_uninstall$tabs_func_install$tabs_func_uninstall
 			);
 			".'$'."css = array_merge(".'$'."css, ".'$'."css_compatibility);
 		}
-		".'$'."this->context->controller->addCSS(".'$'."css, 'all');
+		if (version_compare(_PS_VERSION_, '1.5', '>'))
+			".'$'."this->context->controller->addCSS(".'$'."css, 'all');
+		else
+		{
+			".'$'."css_links = '';
+			foreach (".'$'."css as ".'$'."css_link)
+				".'$'."css_links .= '<link type="text/css" rel="stylesheet" href="'.$css_link.'" />';
+			unset(".'$'."css, ".'$'."css_link);
+			".'$'."return .= ".'$'."css_links;
+		}
 
 		// Load JS
 		".'$'."js = array(
@@ -608,10 +625,20 @@ $sql_func_install$sql_func_uninstall$tabs_func_install$tabs_func_uninstall
 			);
 			".'$'."js = array_merge(".'$'."js_compatibility, ".'$'."js);
 		}
-		".'$'."this->context->controller->addJS(".'$'."js);
-
+		if (version_compare(_PS_VERSION_, '1.5', '>'))
+			".'$'."this->context->controller->addJS(".'$'."js);
+		else
+		{
+			".'$'."js_links = '';
+			foreach (".'$'."js as ".'$'."js_link)
+				".'$'."js_links .= '<script type="text/javascript" src="'.$js_link.'"></script>';
+			unset(".'$'."js, ".'$'."js_link);
+			".'$'."return .= ".'$'."js_links;
+		}
 		// Clean memory
 		unset(".'$'."js, ".'$'."css, ".'$'."js_compatibility, ".'$'."css_compatibility);
+
+		return ".'$'."return;
 	}
 
 	/**
@@ -619,8 +646,9 @@ $sql_func_install$sql_func_uninstall$tabs_func_install$tabs_func_uninstall
 	*/
 	public function getContent()
 	{
+		".'$'."return = '';
 		// We load asset
-		".'$'."this->loadAsset();
+		".'$'."assets = ".'$'."this->loadAsset();
 
 		if (version_compare(_PS_VERSION_, '1.6', '<'))
 		{
@@ -654,7 +682,14 @@ $sql_func_install$sql_func_uninstall$tabs_func_install$tabs_func_uninstall
 			'ps_version' => (bool)version_compare(_PS_VERSION_, '1.6', '>'),
 		));
 
-		return ".'$'."this->display(__FILE__, 'views/templates/admin/configuration.tpl');
+		if (version_compare(_PS_VERSION_, '1.5', '<'))
+		{
+			".'$'."this->context->smarty->template_dir = ".'$'."this->admin_tpl_path;
+			".'$'."return .= ".'$'."assets;
+		}
+		
+		".'$'."return .= ".'$'."this->display(__FILE__, 'views/templates/admin/configuration.tpl');
+		return ".'$'."return;
 	}
 $hook_func_front$hook_func_back
 }");
